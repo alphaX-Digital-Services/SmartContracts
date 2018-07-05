@@ -25,12 +25,12 @@ contract HeyMateJobEscrow is Ownable {
         reputation = _reputation;
     }
 
-    function createEscrow(address _worker, uint256 _escrow, uint256 _reputation) onlyOwner public {
-        job = Job(owner, _worker, _escrow, _reputation, false, false);
-        currency.transferFrom(owner, address(this), job.escrow);
+    function createEscrow(address _client, address _worker, uint256 _escrow, uint256 _reputation) onlyOwner public {
+        job = Job(_client, _worker, _escrow, _reputation, false, false);
+        currency.transferFrom(job.client, address(this), job.escrow);
         reputation.transferFrom(job.worker, address(this), job.escrow);
     }
-        
+
     function releaseEscrow() onlyOwner public {
         job.complete = true;
         job.success = true;
