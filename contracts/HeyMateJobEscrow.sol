@@ -44,7 +44,7 @@ contract HeyMateJobEscrow is Ownable {
     
     function refundEscrow() onlyOwner public {
         job.complete = true;
-        currency.transfer(owner, job.escrow);
+        currency.transfer(job.client, job.escrow);
         reputation.burn(job.reputation);
     }
 

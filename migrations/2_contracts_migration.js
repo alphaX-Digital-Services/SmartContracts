@@ -4,7 +4,8 @@ var HeyMateJobEscrow = artifacts.require("./HeyMateJobEscrow.sol");
 
 module.exports = function(deployer) {
   deployer.deploy([
-    HeyMatePayToken,
-    HeyMateReputationToken
-  ]).then(([HeyMatePayTokenDeployed, HeyMateReputationTokenDeployed]) => deployer.deploy(HeyMateJobEscrow, HeyMatePayTokenDeployed.address, HeyMateReputationTokenDeployed.address));
+      HeyMatePayToken,
+      HeyMateReputationToken
+    ])
+    // .then(([HeyMatePayTokenDeployed, HeyMateReputationTokenDeployed]) => deployer.deploy(HeyMateJobEscrow, HeyMatePayTokenDeployed.address, HeyMateReputationTokenDeployed.address));
 };
