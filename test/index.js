@@ -20,45 +20,45 @@ contract('HeyMateJobEscrow test', (accounts) => {
 
   let HeyMatePayTokenInstance, HeyMateReputationTokenInstance, HeyMateJobEscrowInstance;
 
-  before(function() {
-    Promise.all([
-        HeyMatePayToken.deployed(),
-        HeyMateReputationToken.deployed(),
-        HeyMateJobEscrow.deployed()
-      ])
-      .then(([HeyMatePayTokenDeployed, HeyMateReputationTokenDeployed, HeyMateJobEscrowDeployed]) => {
-        HeyMatePayTokenInstance = HeyMatePayTokenDeployed;
-        HeyMateReputationTokenInstance = HeyMateReputationTokenDeployed;
-        HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
+  before(() => Promise.all([
+      HeyMatePayToken.deployed(),
+      HeyMateReputationToken.deployed(),
+      HeyMateJobEscrow.deployed()
+    ])
+    .then(([HeyMatePayTokenDeployed, HeyMateReputationTokenDeployed, HeyMateJobEscrowDeployed]) => {
+      HeyMatePayTokenInstance = HeyMatePayTokenDeployed;
+      HeyMateReputationTokenInstance = HeyMateReputationTokenDeployed;
+      HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
 
-        console.log('HeyMatePayTokenInstance.address', HeyMatePayTokenInstance.address);
-        console.log('HeyMateReputationTokenDeployed.address', HeyMateReputationTokenDeployed.address);
-        console.log('HeyMateJobEscrowInstance.address', HeyMateJobEscrowInstance.address);
-        return true;
-      })
-      .then(_ => HeyMatePayTokenInstance.transfer(accounts[1], 10000), { from: accounts[0] })
-      .then(_ => HeyMateReputationTokenInstance.mint(accounts[2], 10000), { from: accounts[0] });
-  });
+      // console.log('HeyMatePayTokenInstance.address', HeyMatePayTokenInstance.address);
+      // console.log('HeyMateReputationTokenDeployed.address', HeyMateReputationTokenDeployed.address);
+      // console.log('HeyMateJobEscrowInstance.address', HeyMateJobEscrowInstance.address);
+      return true;
+    })
+    .then(_ => HeyMatePayTokenInstance.transfer(accounts[1], 100), { from: accounts[0] })
+    .then(_ => HeyMateReputationTokenInstance.mint(accounts[2], 100), { from: accounts[0] }));
 
-  it("HeyMatePayToken should have 10000 HEY in the Client account", function() {
-    HeyMatePayTokenInstance.balanceOf(accounts[1])
-      .then(balance => assert.equal(balance.valueOf(), 10000, "10000 wasn't in the Client account"));
-  });
+  it("HeyMatePayToken should have 100 HEY in the Client account", () => HeyMatePayTokenInstance.balanceOf(accounts[1])
+    .then(balance => assert.equal(balance.valueOf(), 100, "100 wasn't in the Client account")));
 
-  it("HeyMateReputationToken should have 10000 HMR in the Worker account", function() {
-    HeyMateReputationTokenInstance.balanceOf(accounts[2])
-      .then(balance => assert.equal(balance.valueOf(), 10000, "10000 wasn't in the Worker account"));
-  });
+  it("HeyMateReputationToken should have 100 HMR in the Worker account", () => HeyMateReputationTokenInstance.balanceOf(accounts[2])
+    .then(balance => assert.equal(balance.valueOf(), 100, "100 wasn't in the Worker account")));
 
-  it("Escrow Contract should receive 100HEY tokens from Client and 100HMR tokens from Worker", function() {
+  it("Escrow Contract should receive 100HEY tokens from Client and 100HMR tokens from Worker", () =>
     HeyMatePayTokenInstance.approve(HeyMateJobEscrowInstance.address, 100, { from: accounts[1] })
-      .then(_ => HeyMateReputationTokenInstance.approve(HeyMateJobEscrowInstance.address, 100, { from: accounts[2] }))
-      .then(_ => HeyMateJobEscrowInstance.createEscrow(accounts[1], accounts[2], 100, 100, { from: accounts[0] }))
-      .then(_ => Promise.all([
-        HeyMatePayTokenInstance.balanceOf(HeyMateJobEscrowInstance.address),
-        HeyMateReputationTokenInstance.balanceOf(HeyMateJobEscrowInstance.address)
-      ]))
-      .then(([HEYTokenBallance, HMRTokenBallance]) => assert.deepEqual([HEYTokenBallance.valueOf(), HMRTokenBallance.valueOf()].valueOf(), ['100', '100'], "100HEY OR 100HMR wasn't in the HeyMateJobEscrow account"));
-  });
+    .then(_ => HeyMateReputationTokenInstance.approve(HeyMateJobEscrowInstance.address, 100, { from: accounts[2] }))
+    .then(_ => HeyMateJobEscrowInstance.createEscrow(accounts[1], accounts[2], 100, 100, { from: accounts[0] }))
+    .then(_ => Promise.all([
+      HeyMatePayTokenInstance.balanceOf(HeyMateJobEscrowInstance.address),
+      HeyMateReputationTokenInstance.balanceOf(HeyMateJobEscrowInstance.address)
+    ]))
+    .then(([HEYTokenBallance, HMRTokenBallance]) => assert.deepEqual([HEYTokenBallance.valueOf(), HMRTokenBallance.valueOf()].valueOf(), ['100', '100'], "100HEY OR 100HMR wasn't in the HeyMateJobEscrow account")));
 
+  it("Worker should receive 100HEY tokens and 200HMR tokens when the Job is delivered successfully", () => HeyMateJobEscrowInstance.releaseEscrow({ from: accounts[0] })
+    .then(_ => HeyMateReputationTokenInstance.mint(accounts[2], 200), { from: accounts[0] })
+    .then(_ => Promise.all([
+      HeyMatePayTokenInstance.balanceOf(accounts[2]),
+      HeyMateReputationTokenInstance.balanceOf(accounts[2])
+    ]))
+    .then(([HEYTokenBallance, HMRTokenBallance]) => assert.deepEqual([HEYTokenBallance.valueOf(), HMRTokenBallance.valueOf()].valueOf(), ['100', '200'], "100HEY OR 200HMR wasn't in the Workers account")));
 });

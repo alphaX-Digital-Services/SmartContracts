@@ -28,7 +28,7 @@ contract HeyMateJobEscrow is Ownable {
     function createEscrow(address _client, address _worker, uint256 _escrow, uint256 _reputation) onlyOwner public {
         job = Job(_client, _worker, _escrow, _reputation, false, false);
         currency.transferFrom(job.client, address(this), job.escrow);
-        reputation.transferFrom(job.worker, address(this), job.escrow);
+        reputation.transferFrom(job.worker, address(this), job.reputation);
     }
 
     function releaseEscrow() onlyOwner public {
@@ -36,8 +36,8 @@ contract HeyMateJobEscrow is Ownable {
         job.success = true;
         currency.transfer(job.worker, job.escrow);
         //need to mint some more from the backend
-        reputation.transfer(job.worker, job.reputation);
-        //reputation.burn(job.reputation);
+        // reputation.transfer(job.worker, job.reputation);
+        reputation.burn(job.reputation);
         // mint more tokens to the worker
         // burn whatever is on the Escrows contract acct
     }
