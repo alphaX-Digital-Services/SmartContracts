@@ -16,172 +16,211 @@ var HeyMateJobEscrow = artifacts.require('HeyMateJobEscrow.sol');
 (9) 0x5aeda56215b167893e80b4fe645ba6d5bab767de
  */
 
-contract(`Job Delivered Successfully`, (accounts) => {
+contract(`SUCCESSFULL JOB DELIVERY`, (accounts) => {
 
   let HeyMatePayTokenInstance, HeyMateReputationTokenInstance, HeyMateJobEscrowInstance;
+
+  const OWNER = `0x627306090abab3a6e1400e9345bc60c78a8bef57`;
+  const CLIENT = `0xf17f52151ebef6c7334fad080c5704d77216b732`;
+  const WORKER = `0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef`;
+  let ESCROW;
+
+  const INITIAL_BALLANCE_HEY = 100;
+  const INITIAL_BALLANCE_HMR = 100;
+
+  const TRANSFER_AMOUNT_HEY = 100;
+  const TRANSFER_AMOUNT_HMR = 100;
+
+  const JOB_SUCCESS_MULTIPLIER = 2;
 
   before(() => Promise.all([
       HeyMatePayToken.deployed(),
       HeyMateReputationToken.deployed(),
       // HeyMateJobEscrow.deployed()
     ])
-    .then(([HeyMatePayTokenDeployed, HeyMateReputationTokenDeployed, HeyMateJobEscrowDeployed]) => {
+    .then(([
+      HeyMatePayTokenDeployed,
+      HeyMateReputationTokenDeployed,
+      // HeyMateJobEscrowDeployed
+    ]) => {
       HeyMatePayTokenInstance = HeyMatePayTokenDeployed;
       HeyMateReputationTokenInstance = HeyMateReputationTokenDeployed;
       // HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
-
-      // console.log('HeyMatePayTokenInstance.address', HeyMatePayTokenInstance.address);
-      // console.log('HeyMateReputationTokenDeployed.address', HeyMateReputationTokenDeployed.address);
-      // console.log('HeyMateJobEscrowInstance.address', HeyMateJobEscrowInstance.address);
       return true;
     })
-    .then(_ => HeyMatePayTokenInstance.transfer(accounts[1], 100), { from: accounts[0] })
-    .then(_ => HeyMateReputationTokenInstance.mint(accounts[2], 100), { from: accounts[0] }));
+    .then(_ => HeyMatePayTokenInstance.transfer(CLIENT, INITIAL_BALLANCE_HEY), { from: OWNER })
+    .then(_ => HeyMateReputationTokenInstance.mint(WORKER, INITIAL_BALLANCE_HMR), { from: OWNER })
+  );
 
-  it(`should have 100HEY on Client's ballance`, () => HeyMatePayTokenInstance.balanceOf(accounts[1])
-    .then(balance => assert.equal(balance.valueOf(), 100, `NO 100HEY on Client's ballance`)));
+  it(`should have ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ballance`, () => HeyMatePayTokenInstance.balanceOf(CLIENT)
+    .then(balance => assert.equal(balance.valueOf(), INITIAL_BALLANCE_HEY, `NO ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ballance`)));
 
-  it(`should have 100HMR on Worker's ballance`, () => HeyMateReputationTokenInstance.balanceOf(accounts[2])
-    .then(balance => assert.equal(balance.valueOf(), 100, `NO 100HMR on Worker's ballance`)));
+  it(`should have ${INITIAL_BALLANCE_HMR} HMR on WORKER'S ballance`, () => HeyMateReputationTokenInstance.balanceOf(WORKER)
+    .then(balance => assert.equal(balance.valueOf(), INITIAL_BALLANCE_HMR, `NO ${INITIAL_BALLANCE_HMR} HMR on WORKER'S ballance`)));
 
-  it(`should deploy a new Escrow Contract from the Owners Address`, () => {
-    return HeyMateJobEscrow.new(HeyMatePayTokenInstance.address, HeyMateReputationTokenInstance.address, { from: accounts[0] })
+  it(`should deploy a new JOB ESCROW CONTRACT from the OWNER'S ADDRESS`, () => {
+    return HeyMateJobEscrow.new(HeyMatePayTokenInstance.address, HeyMateReputationTokenInstance.address, { from: OWNER })
       .then(HeyMateJobEscrowDeployed => {
         HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
-        return assert.isOk(HeyMateJobEscrowInstance.address, `everything is ok ${HeyMateJobEscrowDeployed.address}`);
+        ESCROW = HeyMateJobEscrowDeployed.address;
+        return assert.isOk(HeyMateJobEscrowInstance.address, `everything is ok ${ESCROW}`);
       });
   })
 
-  it(`should approve HeyMatePayTokenInstance to transfer 100HEY from Client to Escrow`, () =>
-    HeyMatePayTokenInstance.approve(HeyMateJobEscrowInstance.address, 100, { from: accounts[1] })
-    .then(_ => HeyMatePayTokenInstance.allowance(accounts[1], HeyMateJobEscrowInstance.address))
-    .then(allowance => assert.equal(allowance.valueOf(), 100, `DIDN'T approve HeyMatePayTokenInstance to transfer 100HEY from Client to Escrow`))
+  it(`should approve HeyMatePayToken CONTRACT to transfer ${TRANSFER_AMOUNT_HEY} HEY from CLIENT to HeyMateJobEscrow CONTRACT`, () =>
+    HeyMatePayTokenInstance.approve(ESCROW, TRANSFER_AMOUNT_HEY, { from: CLIENT })
+    .then(_ => HeyMatePayTokenInstance.allowance(CLIENT, ESCROW))
+    .then(allowance => assert.equal(allowance.valueOf(), TRANSFER_AMOUNT_HEY, `DIDN'T approve HeyMatePayToken CONTRACT to transfer ${TRANSFER_AMOUNT_HEY} HEY from CLIENT to HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should approve HeyMateReputationTokenInstance to transfer 100HEY from Worker to Escrow`, () =>
-    HeyMateReputationTokenInstance.approve(HeyMateJobEscrowInstance.address, 100, { from: accounts[2] })
-    .then(_ => HeyMateReputationTokenInstance.allowance(accounts[2], HeyMateJobEscrowInstance.address))
-    .then(allowance => assert.equal(allowance.valueOf(), 100, `DIDN'T approve HeyMateReputationTokenInstance to transfer 100HEY from Worker to Escrow`))
+  it(`should approve HeyMateReputationToken CONTRACT to transfer ${TRANSFER_AMOUNT_HMR} HMR from WORKER to HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateReputationTokenInstance.approve(ESCROW, TRANSFER_AMOUNT_HMR, { from: WORKER })
+    .then(_ => HeyMateReputationTokenInstance.allowance(WORKER, ESCROW))
+    .then(allowance => assert.equal(allowance.valueOf(), TRANSFER_AMOUNT_HMR, `DIDN'T approve HeyMateReputationToken CONTRACT to transfer ${TRANSFER_AMOUNT_HMR} HMR from WORKER to HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should create a new Job on Escrow Contract`, () =>
-    HeyMateJobEscrowInstance.createEscrow(accounts[1], accounts[2], 100, 100, { from: accounts[0] }));
+  it(`should create a new JOB on HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateJobEscrowInstance.createEscrow(CLIENT, WORKER, TRANSFER_AMOUNT_HEY, TRANSFER_AMOUNT_HMR, { from: OWNER }));
 
-  it(`should have 100HEY on the new Job on Escrow Contract`, () =>
-    HeyMateJobEscrowInstance.job.call()
-    .then(job => assert.equal(job[2], 100, `NO 100HEY on the new Job on Escrow Contract`))
+  it(`should have ${TRANSFER_AMOUNT_HEY} HEY on the new JOB on HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateJobEscrowInstance.getJob.call()
+    .then(job => assert.equal(job[2], TRANSFER_AMOUNT_HEY, `DOES NOT have ${TRANSFER_AMOUNT_HEY} HEY on the new JOB on HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should have 100HMR on the new Job on Escrow Contract`, () =>
-    HeyMateJobEscrowInstance.job.call()
-    .then(job => assert.equal(job[3], 100, `NO 100HMR on the new Job on Escrow Contract`))
+  it(`should have ${TRANSFER_AMOUNT_HMR} HMR on the new JOB on HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateJobEscrowInstance.getJob.call()
+    .then(job => assert.equal(job[3], TRANSFER_AMOUNT_HMR, `DOES NOT have ${TRANSFER_AMOUNT_HMR} HMR on the new JOB on HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should deliver the Job`, () =>
-    HeyMateJobEscrowInstance.releaseEscrow({ from: accounts[0] })
-    .then(_ => HeyMateJobEscrowInstance.job.call())
-    .then(job => assert.equal(job[5], true, `Did NOT deliver the Job`))
+  it(`should COMPLETE the JOB`, () =>
+    HeyMateJobEscrowInstance.releaseEscrow({ from: OWNER })
+    .then(_ => HeyMateJobEscrowInstance.getJob.call())
+    .then(job => assert.equal(job[5], true, `DID NOT COMPLETE the JOB`))
   );
 
-  it(`should mint 200HMR to Worker`, () => HeyMateReputationTokenInstance.mint(accounts[2], 200, { from: accounts[0] }));
-
-  it(`should deliver the Job Successfully`, () =>
-    HeyMateJobEscrowInstance.job.call()
-    .then(job => assert.equal(job[4], true, `Did NOT deliver the Job Successfully`))
+  it(`should COMPLETE the JOB SUCCESSFULLY`, () =>
+    HeyMateJobEscrowInstance.getJob.call()
+    .then(job => assert.equal(job[4], true, `DID NOT COMPLETE the JOB SUCCESSFULLY`))
   );
 
-  it(`should have 100HEY on Worker upon Successfull Job Delivery`, () =>
-    HeyMatePayTokenInstance.balanceOf(accounts[2])
-    .then(ballance => assert.equal(ballance.valueOf(), 100, `DOES NOT have 100HEY on Worker upon Successfull Job Delivery`))
+  it(`should mint ${TRANSFER_AMOUNT_HMR * JOB_SUCCESS_MULTIPLIER} HMR to WORKER`, () =>
+    HeyMateReputationTokenInstance.mint(WORKER, TRANSFER_AMOUNT_HMR * JOB_SUCCESS_MULTIPLIER, { from: OWNER }));
+
+  it(`should have ${TRANSFER_AMOUNT_HEY} HEY on WORKER'S ADDRESS upon SUCCESSFULL JOB DELIVERY`, () =>
+    HeyMatePayTokenInstance.balanceOf(WORKER)
+    .then(ballance => assert.equal(ballance.valueOf(), TRANSFER_AMOUNT_HEY, `DOES NOT have ${TRANSFER_AMOUNT_HEY} HEY on WORKER'S ADDRESS upon SUCCESSFULL JOB DELIVERY`))
   );
 
-  it(`should have 200HMR on Worker upon Successfull Job Delivery`, () =>
-    HeyMateReputationTokenInstance.balanceOf(accounts[2])
-    .then(ballance => assert.equal(ballance.valueOf(), 200, `DOES NOT have 200HMR on Worker upon Successfull Job Delivery`))
+  it(`should have ${TRANSFER_AMOUNT_HMR * JOB_SUCCESS_MULTIPLIER} HMR on WORKER'S ADDRESS upon SUCCESSFULL JOB DELIVERY`, () =>
+    HeyMateReputationTokenInstance.balanceOf(WORKER)
+    .then(ballance => assert.equal(ballance.valueOf(), TRANSFER_AMOUNT_HMR * JOB_SUCCESS_MULTIPLIER, `DOES NOT have ${TRANSFER_AMOUNT_HMR * JOB_SUCCESS_MULTIPLIER} HMR on WORKER'S ADDRESS upon SUCCESSFULL JOB DELIVERY`))
+  );
+
+  it(`should have ${INITIAL_BALLANCE_HEY - TRANSFER_AMOUNT_HEY} HEY on CLIENT'S ADDRESS upon SUCCESSFULL JOB DELIVERY`, () =>
+    HeyMatePayTokenInstance.balanceOf(CLIENT)
+    .then(ballance => assert.equal(ballance.valueOf(), INITIAL_BALLANCE_HEY - TRANSFER_AMOUNT_HEY, `DOES NOT have ${INITIAL_BALLANCE_HEY - TRANSFER_AMOUNT_HEY} HEY on CLIENT'S ADDRESS upon SUCCESSFULL JOB DELIVERY`))
   );
 });
 
-contract(`Job NOT Delivered Successfully`, (accounts) => {
+contract(`UNSUCCESSFULL JOB DELIVERY`, (accounts) => {
 
   let HeyMatePayTokenInstance, HeyMateReputationTokenInstance, HeyMateJobEscrowInstance;
+
+  const OWNER = `0x627306090abab3a6e1400e9345bc60c78a8bef57`;
+  const CLIENT = `0xf17f52151ebef6c7334fad080c5704d77216b732`;
+  const WORKER = `0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef`;
+  let ESCROW;
+
+  const INITIAL_BALLANCE_HEY = 100;
+  const INITIAL_BALLANCE_HMR = 100;
+
+  const TRANSFER_AMOUNT_HEY = 100;
+  const TRANSFER_AMOUNT_HMR = 100;
+
+  const JOB_SUCCESS_MULTIPLIER = 2;
 
   before(() => Promise.all([
       HeyMatePayToken.deployed(),
       HeyMateReputationToken.deployed(),
       // HeyMateJobEscrow.deployed()
     ])
-    .then(([HeyMatePayTokenDeployed, HeyMateReputationTokenDeployed, HeyMateJobEscrowDeployed]) => {
+    .then(([
+      HeyMatePayTokenDeployed,
+      HeyMateReputationTokenDeployed,
+      // HeyMateJobEscrowDeployed
+    ]) => {
       HeyMatePayTokenInstance = HeyMatePayTokenDeployed;
       HeyMateReputationTokenInstance = HeyMateReputationTokenDeployed;
       // HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
-
-      // console.log('HeyMatePayTokenInstance.address', HeyMatePayTokenInstance.address);
-      // console.log('HeyMateReputationTokenDeployed.address', HeyMateReputationTokenDeployed.address);
-      // console.log('HeyMateJobEscrowInstance.address', HeyMateJobEscrowInstance.address);
       return true;
     })
-    .then(_ => HeyMatePayTokenInstance.transfer(accounts[1], 100), { from: accounts[0] })
-    .then(_ => HeyMateReputationTokenInstance.mint(accounts[2], 100), { from: accounts[0] }));
+    .then(_ => HeyMatePayTokenInstance.transfer(CLIENT, INITIAL_BALLANCE_HEY), { from: OWNER })
+    .then(_ => HeyMateReputationTokenInstance.mint(WORKER, INITIAL_BALLANCE_HMR), { from: OWNER })
+  );
 
-  it(`should have 100HEY on Client's ballance`, () => HeyMatePayTokenInstance.balanceOf(accounts[1])
-    .then(balance => assert.equal(balance.valueOf(), 100, `NO 100HEY on Client's ballance`)));
+  it(`should have ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ballance`, () => HeyMatePayTokenInstance.balanceOf(CLIENT)
+    .then(balance => assert.equal(balance.valueOf(), INITIAL_BALLANCE_HEY, `NO ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ballance`)));
 
-  it(`should have 100HMR on Worker's ballance`, () => HeyMateReputationTokenInstance.balanceOf(accounts[2])
-    .then(balance => assert.equal(balance.valueOf(), 100, `NO 100HMR on Worker's ballance`)));
+  it(`should have ${INITIAL_BALLANCE_HMR} HMR on WORKER'S ballance`, () => HeyMateReputationTokenInstance.balanceOf(WORKER)
+    .then(balance => assert.equal(balance.valueOf(), INITIAL_BALLANCE_HMR, `NO ${INITIAL_BALLANCE_HMR} HMR on WORKER'S ballance`)));
 
-  it(`should deploy a new Escrow Contract from the Owners Address`, () => {
-    return HeyMateJobEscrow.new(HeyMatePayTokenInstance.address, HeyMateReputationTokenInstance.address, { from: accounts[0] })
+  it(`should deploy a new JOB ESCROW CONTRACT from the OWNER'S ADDRESS`, () => {
+    return HeyMateJobEscrow.new(HeyMatePayTokenInstance.address, HeyMateReputationTokenInstance.address, { from: OWNER })
       .then(HeyMateJobEscrowDeployed => {
         HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
-        return assert.isOk(HeyMateJobEscrowInstance.address, `everything is ok ${HeyMateJobEscrowDeployed.address}`);
+        ESCROW = HeyMateJobEscrowDeployed.address;
+        return assert.isOk(HeyMateJobEscrowInstance.address, `everything is ok ${ESCROW}`);
       });
   })
 
-  it(`should approve HeyMatePayTokenInstance to transfer 100HEY from Client to Escrow`, () =>
-    HeyMatePayTokenInstance.approve(HeyMateJobEscrowInstance.address, 100, { from: accounts[1] })
-    .then(_ => HeyMatePayTokenInstance.allowance(accounts[1], HeyMateJobEscrowInstance.address))
-    .then(allowance => assert.equal(allowance.valueOf(), 100, `DIDN'T approve HeyMatePayTokenInstance to transfer 100HEY from Client to Escrow`))
+  it(`should approve HeyMatePayToken CONTRACT to transfer ${TRANSFER_AMOUNT_HEY} HEY from CLIENT to HeyMateJobEscrow CONTRACT`, () =>
+    HeyMatePayTokenInstance.approve(ESCROW, TRANSFER_AMOUNT_HEY, { from: CLIENT })
+    .then(_ => HeyMatePayTokenInstance.allowance(CLIENT, ESCROW))
+    .then(allowance => assert.equal(allowance.valueOf(), TRANSFER_AMOUNT_HEY, `DIDN'T approve HeyMatePayToken CONTRACT to transfer ${TRANSFER_AMOUNT_HEY} HEY from CLIENT to HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should approve HeyMateReputationTokenInstance to transfer 100HEY from Worker to Escrow`, () =>
-    HeyMateReputationTokenInstance.approve(HeyMateJobEscrowInstance.address, 100, { from: accounts[2] })
-    .then(_ => HeyMateReputationTokenInstance.allowance(accounts[2], HeyMateJobEscrowInstance.address))
-    .then(allowance => assert.equal(allowance.valueOf(), 100, `DIDN'T approve HeyMateReputationTokenInstance to transfer 100HEY from Worker to Escrow`))
+  it(`should approve HeyMateReputationToken CONTRACT to transfer ${TRANSFER_AMOUNT_HMR} HMR from WORKER to HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateReputationTokenInstance.approve(ESCROW, TRANSFER_AMOUNT_HMR, { from: WORKER })
+    .then(_ => HeyMateReputationTokenInstance.allowance(WORKER, ESCROW))
+    .then(allowance => assert.equal(allowance.valueOf(), TRANSFER_AMOUNT_HMR, `DIDN'T approve HeyMateReputationToken CONTRACT to transfer ${TRANSFER_AMOUNT_HMR} HMR from WORKER to HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should create a new Job on Escrow Contract`, () =>
-    HeyMateJobEscrowInstance.createEscrow(accounts[1], accounts[2], 100, 100, { from: accounts[0] }));
+  it(`should create a new JOB on HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateJobEscrowInstance.createEscrow(CLIENT, WORKER, TRANSFER_AMOUNT_HEY, TRANSFER_AMOUNT_HMR, { from: OWNER }));
 
-  it(`should have 100HEY on the new Job on Escrow Contract`, () =>
-    HeyMateJobEscrowInstance.job.call()
-    .then(job => assert.equal(job[2], 100, `NO 100HEY on the new Job on Escrow Contract`))
+  it(`should have ${TRANSFER_AMOUNT_HEY} HEY on the new JOB on HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateJobEscrowInstance.getJob.call()
+    .then(job => assert.equal(job[2], TRANSFER_AMOUNT_HEY, `DOES NOT have ${TRANSFER_AMOUNT_HEY} HEY on the new JOB on HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should have 100HMR on the new Job on Escrow Contract`, () =>
-    HeyMateJobEscrowInstance.job.call()
-    .then(job => assert.equal(job[3], 100, `NO 100HMR on the new Job on Escrow Contract`))
+  it(`should have ${TRANSFER_AMOUNT_HMR} HMR on the new JOB on HeyMateJobEscrow CONTRACT`, () =>
+    HeyMateJobEscrowInstance.getJob.call()
+    .then(job => assert.equal(job[3], TRANSFER_AMOUNT_HMR, `DOES NOT have ${TRANSFER_AMOUNT_HMR} HMR on the new JOB on HeyMateJobEscrow CONTRACT`))
   );
 
-  it(`should deliver the Job`, () =>
-    HeyMateJobEscrowInstance.refundEscrow({ from: accounts[0] })
-    .then(_ => HeyMateJobEscrowInstance.job.call())
-    .then(job => assert.equal(job[5], true, `Did NOT deliver the Job`))
+  it(`should COMPLETE the JOB`, () =>
+    HeyMateJobEscrowInstance.refundEscrow({ from: OWNER })
+    .then(_ => HeyMateJobEscrowInstance.getJob.call())
+    .then(job => assert.equal(job[5], true, `DID NOT COMPLETE the JOB`))
   );
 
-  // it(`should mint 200HMR to Worker`, () => HeyMateReputationTokenInstance.mint(accounts[2], 200, { from: accounts[0] }));
-
-  it(`should NOT deliver the Job`, () =>
-    HeyMateJobEscrowInstance.job.call()
-    .then(job => assert.equal(job[4], false, `Did deliver the Job Successfully`))
+  it(`should COMPLETE the JOB UNSUCCESSFULLY`, () =>
+    HeyMateJobEscrowInstance.getJob.call()
+    .then(job => assert.equal(job[4], false, `DID NOT COMPLETE the JOB UNSUCCESSFULLY`))
   );
 
-  it(`should have 100HEY on Client upon Bad Job Delivery`, () =>
-    HeyMatePayTokenInstance.balanceOf(accounts[1])
-    .then(ballance => assert.equal(ballance.valueOf(), 100, `DOES NOT have 100HEY on Client upon Bad Job Delivery`))
+  it(`should have ${INITIAL_BALLANCE_HEY - TRANSFER_AMOUNT_HEY} HEY on WORKER'S ADDRESS upon UNSUCCESSFULL JOB DELIVERY`, () =>
+    HeyMatePayTokenInstance.balanceOf(WORKER)
+    .then(ballance => assert.equal(ballance.valueOf(), INITIAL_BALLANCE_HEY - TRANSFER_AMOUNT_HEY, `DOES NOT have ${INITIAL_BALLANCE_HEY - TRANSFER_AMOUNT_HEY} HEY on WORKER'S ADDRESS upon UNSUCCESSFULL JOB DELIVERY`))
   );
 
-  it(`should have 0HMR on Worker upon Bad Job Delivery`, () =>
-    HeyMateReputationTokenInstance.balanceOf(accounts[2])
-    .then(ballance => assert.equal(ballance.valueOf(), 0, `DOES NOT have 0HMR on Worker upon Bad Job Delivery`))
+  it(`should have ${INITIAL_BALLANCE_HMR - TRANSFER_AMOUNT_HMR} HMR on WORKER'S ADDRESS upon UNSUCCESSFULL JOB DELIVERY`, () =>
+    HeyMateReputationTokenInstance.balanceOf(WORKER)
+    .then(ballance => assert.equal(ballance.valueOf(), INITIAL_BALLANCE_HMR - TRANSFER_AMOUNT_HMR, `DOES NOT have ${INITIAL_BALLANCE_HMR - TRANSFER_AMOUNT_HMR} HMR on WORKER'S ADDRESS upon UNSUCCESSFULL JOB DELIVERY`))
+  );
+
+  it(`should have ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ADDRESS upon UNSUCCESSFULL JOB DELIVERY`, () =>
+    HeyMatePayTokenInstance.balanceOf(CLIENT)
+    .then(ballance => assert.equal(ballance.valueOf(), INITIAL_BALLANCE_HEY, `DOES NOT have ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ADDRESS upon UNSUCCESSFULL JOB DELIVERY`))
   );
 });

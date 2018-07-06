@@ -15,7 +15,7 @@ contract HeyMateJobEscrow is Ownable {
         bool complete;
     }
 
-    Job public job;
+    Job private job;
 
     HeyMatePayToken public currency;
     HeyMateReputationToken public reputation;
@@ -23,6 +23,10 @@ contract HeyMateJobEscrow is Ownable {
     constructor(HeyMatePayToken _currency, HeyMateReputationToken _reputation) public {
         currency = _currency;
         reputation = _reputation;
+    }
+
+    function getJob() public returns(address, address, uint256, uint256, bool, bool) {
+        return (job.client, job.worker, job.escrow, job.reputation, job.success, job.complete);
     }
 
     function createEscrow(address _client, address _worker, uint256 _escrow, uint256 _reputation) onlyOwner public {
@@ -35,11 +39,7 @@ contract HeyMateJobEscrow is Ownable {
         job.complete = true;
         job.success = true;
         currency.transfer(job.worker, job.escrow);
-        //need to mint some more from the backend
-        // reputation.transfer(job.worker, job.reputation);
         reputation.burn(job.reputation);
-        // mint more tokens to the worker
-        // burn whatever is on the Escrows contract acct
     }
     
     function refundEscrow() onlyOwner public {
