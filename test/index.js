@@ -240,3 +240,80 @@ contract(`UNSUCCESSFULL JOB DELIVERY`, (accounts) => {
     .then(ballance => assert.equal(ballance.valueOf(), INITIAL_BALLANCE_HEY, `DOES NOT have ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ADDRESS upon UNSUCCESSFULL JOB DELIVERY`))
   );
 });
+
+contract(`SECURITY TESTS`, (accounts) => {
+
+  let HeyMatePayTokenInstance, HeyMateReputationTokenInstance, HeyMateJobEscrowInstance;
+
+  const OWNER = `0x627306090abab3a6e1400e9345bc60c78a8bef57`;
+  const CLIENT = `0xf17f52151ebef6c7334fad080c5704d77216b732`;
+  const WORKER = `0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef`;
+  let ESCROW;
+
+  const INITIAL_BALLANCE_HEY = 100;
+  const INITIAL_BALLANCE_HMR = 100;
+
+  const TRANSFER_AMOUNT_HEY = 100;
+  const TRANSFER_AMOUNT_HMR = 100;
+
+  const JOB_SUCCESS_MULTIPLIER = 2;
+
+  before(() => Promise.all([
+      HeyMatePayToken.deployed(),
+      HeyMateReputationToken.deployed(),
+      // HeyMateJobEscrow.deployed()
+    ])
+    .then(([
+      HeyMatePayTokenDeployed,
+      HeyMateReputationTokenDeployed,
+      // HeyMateJobEscrowDeployed
+    ]) => {
+      HeyMatePayTokenInstance = HeyMatePayTokenDeployed;
+      HeyMateReputationTokenInstance = HeyMateReputationTokenDeployed;
+      // HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
+      return true;
+    })
+    .then(_ => HeyMatePayTokenInstance.transfer(CLIENT, INITIAL_BALLANCE_HEY), { from: OWNER })
+    .then(_ => HeyMateReputationTokenInstance.mint(WORKER, INITIAL_BALLANCE_HMR), { from: OWNER })
+  );
+
+  it(`should have ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ballance`, () => HeyMatePayTokenInstance.balanceOf(CLIENT)
+    .then(balance => assert.equal(balance.valueOf(), INITIAL_BALLANCE_HEY, `NO ${INITIAL_BALLANCE_HEY} HEY on CLIENT'S ballance`)));
+
+  it(`should have ${INITIAL_BALLANCE_HMR} HMR on WORKER'S ballance`, () => HeyMateReputationTokenInstance.balanceOf(WORKER)
+    .then(balance => assert.equal(balance.valueOf(), INITIAL_BALLANCE_HMR, `NO ${INITIAL_BALLANCE_HMR} HMR on WORKER'S ballance`)));
+
+  it(`should deploy a new JOB ESCROW CONTRACT from the OWNER'S ADDRESS`, () => {
+    return HeyMateJobEscrow.new(HeyMatePayTokenInstance.address, HeyMateReputationTokenInstance.address, { from: OWNER })
+      .then(HeyMateJobEscrowDeployed => {
+        HeyMateJobEscrowInstance = HeyMateJobEscrowDeployed;
+        ESCROW = HeyMateJobEscrowDeployed.address;
+        return assert.isOk(HeyMateJobEscrowInstance.address, `everything is ok ${ESCROW}`);
+      });
+  })
+
+  it(`CLIENT should NOT be able to CREATE A JOB`, () =>
+    HeyMateJobEscrowInstance.createEscrow(CLIENT, WORKER, TRANSFER_AMOUNT_HEY, TRANSFER_AMOUNT_HMR, { from: CLIENT })
+    .catch(error => assert.ok(true, "Passed")));
+
+  it(`WORKER should NOT be able to CREATE A JOB`, () =>
+    HeyMateJobEscrowInstance.createEscrow(CLIENT, WORKER, TRANSFER_AMOUNT_HEY, TRANSFER_AMOUNT_HMR, { from: WORKER })
+    .catch(error => assert.ok(true, "Passed")));
+
+  it(`CLIENT should NOT be able to COMPLETE A JOB SUCCESSFULLY`, () =>
+    HeyMateJobEscrowInstance.releaseEscrow({ from: CLIENT })
+    .catch(error => assert.ok(true, "Passed")));
+
+  it(`WORKER should NOT be able to COMPLETE A JOB SUCCESSFULLY`, () =>
+    HeyMateJobEscrowInstance.releaseEscrow({ from: WORKER })
+    .catch(error => assert.ok(true, "Passed")));
+
+  it(`CLIENT should NOT be able to COMPLETE A JOB UNSUCCESSFULLY`, () =>
+    HeyMateJobEscrowInstance.refundEscrow({ from: CLIENT })
+    .catch(error => assert.ok(true, "Passed")));
+
+  it(`WORKER should NOT be able to COMPLETE A JOB UNSUCCESSFULLY`, () =>
+    HeyMateJobEscrowInstance.refundEscrow({ from: WORKER })
+    .catch(error => assert.ok(true, "Passed")));
+
+});
