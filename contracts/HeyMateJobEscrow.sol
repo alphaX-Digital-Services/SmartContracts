@@ -28,6 +28,8 @@ contract HeyMateJobEscrow is Ownable {
     * should have HEY token ERC20 Contract address and HMR token ERC20 Contract address
     */
     constructor(HeyMatePayToken _currency, HeyMateReputationToken _reputation) public {
+        require(_currency != address(0), "Error: HEY token address is 0x0");
+        require(_reputation != address(0), "Error: HMR token address is 0x0");
         currency = _currency;
         reputation = _reputation;
     }
@@ -43,6 +45,15 @@ contract HeyMateJobEscrow is Ownable {
     * only the Owner - HeyMate Backend is allowed to create the job
     */
     function createEscrow(address _client, address _worker, uint256 _escrow, uint256 _reputation) onlyOwner public {
+        require(_client != address(0), "Error: Client address is 0x0");
+        require(_worker != address(0), "Error: Worker address is 0x0");
+
+        require(_escrow > 0, "Error: Escrow HEY amount has to be more than zero");
+        require(_escrow < 1000, "Error: Escrow HEY amount has to be less than 1000");
+
+        require(_reputation > 0, "Error: Reputation HMR amount has to be more than zero");
+        require(_reputation < 1000, "Error: Reputation HMR amount has to be less than 1000");
+
         job = Job(_client, _worker, _escrow, _reputation, false, false);
         currency.transferFrom(job.client, address(this), job.escrow);
         reputation.transferFrom(job.worker, address(this), job.reputation);
