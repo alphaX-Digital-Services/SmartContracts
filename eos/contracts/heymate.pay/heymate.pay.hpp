@@ -10,18 +10,15 @@ namespace heymate {
 
   using std::string;
 
-  class reputation : public contract {
+  class pay : public contract {
     public:
-      reputation(account_name self):contract(self){}
+      pay(account_name self):contract(self){}
 
       void mint(account_name account, uint64_t amount);
-
-      void burn(account_name account, uint64_t amount);
 
       void approve(account_name owner, account_name spender, uint64_t amount);
 
       void transferto(account_name from, account_name to, uint64_t amount);
-
     private:
 
       //@abi table accounts i64

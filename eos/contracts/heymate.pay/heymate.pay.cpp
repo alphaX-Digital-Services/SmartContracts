@@ -1,9 +1,9 @@
-#include "heymate.reputation.hpp"
+#include "heymate.pay.hpp"
 
 namespace heymate {
 
 //@abi action
-void reputation::mint(account_name owner, uint64_t amount)
+void pay::mint(account_name owner, uint64_t amount)
 {
   require_auth(_self);
   eosio_assert(amount > 0, "amount should be higher than zero");
@@ -13,17 +13,7 @@ void reputation::mint(account_name owner, uint64_t amount)
 }
 
 //@abi action
-void reputation::burn(account_name owner, uint64_t amount)
-{
-  require_auth(_self);
-  eosio_assert(amount > 0, "amount should be higher than zero");
-  eosio_assert(is_account(owner), "owner account does not exist");
-
-  sub_balance(owner, amount);
-}
-
-//@abi action
-void reputation::approve(account_name owner, account_name spender, uint64_t amount)
+void pay::approve(account_name owner, account_name spender, uint64_t amount)
 {
   require_auth(owner);
   eosio_assert(is_account(spender), "spender account does not exist");
@@ -33,7 +23,7 @@ void reputation::approve(account_name owner, account_name spender, uint64_t amou
 }
 
 //@abi action
-void reputation::transferto(account_name from, account_name to, uint64_t amount)
+void pay::transferto(account_name from, account_name to, uint64_t amount)
 {
   require_auth(to);
   eosio_assert(is_account(from), "from account does not exist");
@@ -45,7 +35,7 @@ void reputation::transferto(account_name from, account_name to, uint64_t amount)
   sub_allowance(from, to, amount);
 }
 
-bool reputation::transfer_allowed(account_name from, account_name to, uint64_t amount)
+bool pay::transfer_allowed(account_name from, account_name to, uint64_t amount)
 {
   allowances_index allowances(_self, from);
   auto found_allowance = allowances.find(to);
@@ -53,7 +43,7 @@ bool reputation::transfer_allowed(account_name from, account_name to, uint64_t a
   return found_allowance != allowances.end() && amount <= found_allowance->amount;
 }
 
-void reputation::add_allowance(account_name owner, account_name spender, uint64_t value)
+void pay::add_allowance(account_name owner, account_name spender, uint64_t value)
 {
   allowances_index allowances(_self, owner);
   auto found_allowance = allowances.find(spender);
@@ -70,7 +60,7 @@ void reputation::add_allowance(account_name owner, account_name spender, uint64_
   }
 }
 
-void reputation::sub_allowance(account_name owner, account_name spender, uint64_t value)
+void pay::sub_allowance(account_name owner, account_name spender, uint64_t value)
 {
   allowances_index allowances(_self, owner);
   auto found_allowance = allowances.get(spender, "no allowance object found");
@@ -85,7 +75,7 @@ void reputation::sub_allowance(account_name owner, account_name spender, uint64_
   }
 }
 
-void reputation::sub_balance(account_name owner, uint64_t value) 
+void pay::sub_balance(account_name owner, uint64_t value) 
 {
   accounts_index accounts(_self, _self);
   const auto& found_account = accounts.get(owner, "no balance object found");
@@ -100,7 +90,7 @@ void reputation::sub_balance(account_name owner, uint64_t value)
   }
 }
 
-void reputation::add_balance(account_name owner, uint64_t value)
+void pay::add_balance(account_name owner, uint64_t value)
 {
   accounts_index accounts(_self, _self);
   auto found_account = accounts.find(owner);
@@ -119,4 +109,4 @@ void reputation::add_balance(account_name owner, uint64_t value)
 
 } /// namespace heymate
 
-EOSIO_ABI(heymate::reputation, (mint)(burn)(approve)(transferto))
+EOSIO_ABI(heymate::pay, (mint)(approve)(transferto))
