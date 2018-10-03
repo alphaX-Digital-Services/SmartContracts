@@ -25,7 +25,6 @@ void pay::approve(account_name owner, account_name spender, uint64_t amount)
 //@abi action
 void pay::transferto(account_name from, account_name to, uint64_t amount)
 {
-  require_auth(to);
   eosio_assert(is_account(from), "from account does not exist");
   eosio_assert(amount > 0, "amount should be higher than zero");
   eosio_assert(transfer_allowed(from, to, amount), "transfer is not allowed");

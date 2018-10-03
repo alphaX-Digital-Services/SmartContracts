@@ -1,14 +1,10 @@
 #pragma once
 
-#include <eosiolib/asset.hpp>
 #include <eosiolib/eosio.hpp>
-#include <string>
 
 using namespace eosio;
 
 namespace heymate {
-
-  using std::string;
 
   class pay : public contract {
     public:

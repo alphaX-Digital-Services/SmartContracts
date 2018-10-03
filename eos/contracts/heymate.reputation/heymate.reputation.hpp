@@ -1,14 +1,10 @@
 #pragma once
 
-#include <eosiolib/asset.hpp>
 #include <eosiolib/eosio.hpp>
-#include <string>
 
 using namespace eosio;
 
 namespace heymate {
-
-  using std::string;
 
   class reputation : public contract {
     public:
@@ -23,7 +19,6 @@ namespace heymate {
       void transferto(account_name from, account_name to, uint64_t amount);
 
     private:
-
       //@abi table accounts i64
       struct account {
         account_name owner;
