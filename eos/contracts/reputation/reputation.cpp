@@ -1,4 +1,4 @@
-#include "heymate.reputation.hpp"
+#include "reputation.hpp"
 
 namespace heymate {
 
@@ -44,6 +44,17 @@ void reputation::transferto(account_name from, account_name to, uint64_t amount)
   sub_allowance(from, to, amount);
 }
 
+//@abi action
+void reputation::transfer(account_name from, account_name to, uint64_t amount)
+{
+  require_auth(from);
+  eosio_assert(is_account(to), "to account does not exist");
+  eosio_assert(amount > 0, "amount should be higher than zero");
+
+  add_balance(to, amount);
+  sub_balance(from, amount);
+}
+
 bool reputation::transfer_allowed(account_name from, account_name to, uint64_t amount)
 {
   allowances_index allowances(_self, from);
@@ -72,7 +83,7 @@ void reputation::add_allowance(account_name owner, account_name spender, uint64_
 void reputation::sub_allowance(account_name owner, account_name spender, uint64_t value)
 {
   allowances_index allowances(_self, owner);
-  auto found_allowance = allowances.get(spender, "no allowance object found");
+  const auto& found_allowance = allowances.get(spender, "no allowance object found");
   eosio_assert(found_allowance.amount >= value, "overdrawn amount");
 
   if(found_allowance.amount == value) {
@@ -118,4 +129,4 @@ void reputation::add_balance(account_name owner, uint64_t value)
 
 } /// namespace heymate
 
-EOSIO_ABI(heymate::reputation, (mint)(burn)(approve)(transferto))
+EOSIO_ABI(heymate::reputation, (mint)(burn)(approve)(transferto)(transfer))

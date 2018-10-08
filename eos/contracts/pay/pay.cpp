@@ -1,4 +1,4 @@
-#include "heymate.pay.hpp"
+#include "pay.hpp"
 
 namespace heymate {
 
@@ -34,6 +34,17 @@ void pay::transferto(account_name from, account_name to, uint64_t amount)
   sub_allowance(from, to, amount);
 }
 
+//@abi action
+void pay::transfer(account_name from, account_name to, uint64_t amount)
+{
+  require_auth(from);
+  eosio_assert(is_account(to), "to account does not exist");
+  eosio_assert(amount > 0, "amount should be higher than zero");
+
+  add_balance(to, amount);
+  sub_balance(from, amount);
+}
+
 bool pay::transfer_allowed(account_name from, account_name to, uint64_t amount)
 {
   allowances_index allowances(_self, from);
@@ -62,7 +73,7 @@ void pay::add_allowance(account_name owner, account_name spender, uint64_t value
 void pay::sub_allowance(account_name owner, account_name spender, uint64_t value)
 {
   allowances_index allowances(_self, owner);
-  auto found_allowance = allowances.get(spender, "no allowance object found");
+  const auto& found_allowance = allowances.get(spender, "no allowance object found");
   eosio_assert(found_allowance.amount >= value, "overdrawn amount");
 
   if(found_allowance.amount == value) {
@@ -74,7 +85,7 @@ void pay::sub_allowance(account_name owner, account_name spender, uint64_t value
   }
 }
 
-void pay::sub_balance(account_name owner, uint64_t value) 
+void pay::sub_balance(account_name owner, uint64_t value)  
 {
   accounts_index accounts(_self, _self);
   const auto& found_account = accounts.get(owner, "no balance object found");
@@ -108,4 +119,4 @@ void pay::add_balance(account_name owner, uint64_t value)
 
 } /// namespace heymate
 
-EOSIO_ABI(heymate::pay, (mint)(approve)(transferto))
+EOSIO_ABI(heymate::pay, (mint)(approve)(transferto)(transfer))

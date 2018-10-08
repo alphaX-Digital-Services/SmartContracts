@@ -1,4 +1,4 @@
-#include "heymate.escrow.hpp"
+#include "escrow.hpp"
 
 namespace heymate {
 
@@ -33,8 +33,19 @@ void escrow::create(
     job.complete = false;
   });
 
-  //TODO: call transferto for HEY and HMR tokens
-  //TODO: call transferto for HMR tokens
+  //transfer HEY to escrow
+  eosio::action(
+    permission_level{ _self, N(active) },
+    N(pay), N(transferto),
+    std::make_tuple(client, _self, escrow)
+  ).send();
+
+  //transfer HMR to escrow
+  eosio::action(
+    permission_level{ _self, N(active) },
+    N(reputation), N(transferto),
+    std::make_tuple(worker, _self, escrow)
+  ).send();
 }
 
 //@abi action
@@ -51,8 +62,18 @@ void escrow::release(uint64_t id)
     job.success = true;
   });
   
-  //TODO: call HEY transfer to the worker
-  //TODO: call HMR burn for the worker
+  //Call HEY transfer to the worker
+  eosio::action(
+    permission_level{ _self, N(active) },
+    N(pay), N(transfer),
+    std::make_tuple(_self, found_job.worker, found_job.escrow)
+  ).send();
+  //Call HMR burn for the worker
+  eosio::action(
+    permission_level{ _self, N(active) },
+    N(reputation), N(burn),
+    std::make_tuple(found_job.worker, found_job.reputation) //account_name owner, uint64_t amount
+  ).send();
 }
 
 //@abi action
@@ -68,8 +89,18 @@ void escrow::refund(uint64_t id)
     job.complete = true;
   });
 
-  //TODO: call HEY transfer back to the client
-  //TODO: call HMR burn for the worker
+  //Call HEY transfer back to the client
+  eosio::action(
+    permission_level{ _self, N(active) },
+    N(pay), N(transfer),
+    std::make_tuple(_self, found_job.client, found_job.escrow)
+  ).send();
+  //Call HMR burn for the worker
+  eosio::action(
+    permission_level{ _self, N(active) },
+    N(reputation), N(burn),
+    std::make_tuple(found_job.worker, found_job.reputation) //account_name owner, uint64_t amount
+  ).send();
 }
 
 } /// namespace heymate

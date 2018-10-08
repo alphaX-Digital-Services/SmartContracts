@@ -15,6 +15,8 @@ namespace heymate {
       void approve(account_name owner, account_name spender, uint64_t amount);
 
       void transferto(account_name from, account_name to, uint64_t amount);
+
+      void transfer(account_name from, account_name to, uint64_t amount);
     private:
 
       //@abi table accounts i64

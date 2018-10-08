@@ -18,6 +18,7 @@ namespace heymate {
 
       void transferto(account_name from, account_name to, uint64_t amount);
 
+      void transfer(account_name from, account_name to, uint64_t amount);
     private:
       //@abi table accounts i64
       struct account {
