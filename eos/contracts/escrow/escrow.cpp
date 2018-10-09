@@ -54,7 +54,7 @@ void escrow::release(uint64_t id)
   require_auth(_self);
 
   jobs_index jobs(_self, _self);
-  auto found_job = jobs.get(id, "no job object found");
+  const auto& found_job = jobs.get(id, "no job object found");
   eosio_assert(!found_job.complete, "job is already completed");
 
   jobs.modify(found_job, _self, [&](auto& job){
@@ -72,7 +72,7 @@ void escrow::release(uint64_t id)
   eosio::action(
     permission_level{ _self, N(active) },
     N(reputation), N(burn),
-    std::make_tuple(found_job.worker, found_job.reputation) //account_name owner, uint64_t amount
+    std::make_tuple(_self, found_job.worker, found_job.reputation) //account_name owner, uint64_t amount
   ).send();
 }
 
@@ -82,7 +82,7 @@ void escrow::refund(uint64_t id)
   require_auth(_self);
 
   jobs_index jobs(_self, _self);
-  auto found_job = jobs.get(id, "no job object found");
+  const auto& found_job = jobs.get(id, "no job object found");
   eosio_assert(!found_job.complete, "job is already completed");
 
   jobs.modify(found_job, _self, [&](auto& job){

@@ -94,8 +94,8 @@ void pay::sub_balance(account_name owner, uint64_t value)
   if(found_account.balance == value) {
     accounts.erase(found_account);
   } else {
-    accounts.modify(found_account, _self, [&](auto& allowance) {
-      allowance.balance -= value;
+    accounts.modify(found_account, _self, [&](auto& account) {
+      account.balance -= value;
     });
   }
 }

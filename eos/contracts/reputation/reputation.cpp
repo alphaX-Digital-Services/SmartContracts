@@ -13,9 +13,9 @@ void reputation::mint(account_name owner, uint64_t amount)
 }
 
 //@abi action
-void reputation::burn(account_name owner, uint64_t amount)
+void reputation::burn(account_name caller, account_name owner, uint64_t amount)
 {
-  require_auth(_self);
+  require_auth(N(escrow));
   eosio_assert(amount > 0, "amount should be higher than zero");
   eosio_assert(is_account(owner), "owner account does not exist");
 
@@ -104,8 +104,8 @@ void reputation::sub_balance(account_name owner, uint64_t value)
   if(found_account.balance == value) {
     accounts.erase(found_account);
   } else {
-    accounts.modify(found_account, _self, [&](auto& allowance) {
-      allowance.balance -= value;
+    accounts.modify(found_account, _self, [&](auto& account) {
+      account.balance -= value;
     });
   }
 }

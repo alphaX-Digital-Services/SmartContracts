@@ -30,9 +30,9 @@
  (import "env" "require_auth" (func $require_auth (param i64)))
  (import "env" "require_auth2" (func $require_auth2 (param i64 i64)))
  (table 6 6 anyfunc)
- (elem (i32.const 0) $__wasm_nullptr $_ZN7heymate10reputation4burnEyy $_ZN7heymate10reputation8transferEyyy $_ZN7heymate10reputation10transfertoEyyy $_ZN7heymate10reputation7approveEyyy $_ZN7heymate10reputation4mintEyy)
+ (elem (i32.const 0) $__wasm_nullptr $_ZN7heymate10reputation4burnEyyy $_ZN7heymate10reputation8transferEyyy $_ZN7heymate10reputation10transfertoEyyy $_ZN7heymate10reputation7approveEyyy $_ZN7heymate10reputation4mintEyy)
  (memory $0 1)
- (data (i32.const 4) "@e\00\00")
+ (data (i32.const 4) "Pe\00\00")
  (data (i32.const 16) "amount should be higher than zero\00")
  (data (i32.const 64) "owner account does not exist\00")
  (data (i32.const 96) "cannot create objects in table of another contract\00")
@@ -44,21 +44,22 @@
  (data (i32.const 400) "updater cannot change primary key when modifying an object\00")
  (data (i32.const 464) "error reading iterator\00")
  (data (i32.const 496) "read\00")
- (data (i32.const 512) "no balance object found\00")
- (data (i32.const 544) "overdrawn balance\00")
- (data (i32.const 576) "object passed to erase is not in multi_index\00")
- (data (i32.const 624) "cannot erase objects in table of another contract\00")
- (data (i32.const 688) "attempt to remove object that was not in multi_index\00")
- (data (i32.const 752) "spender account does not exist\00")
- (data (i32.const 784) "from account does not exist\00")
- (data (i32.const 816) "transfer is not allowed\00")
- (data (i32.const 848) "no allowance object found\00")
- (data (i32.const 880) "overdrawn amount\00")
- (data (i32.const 912) "to account does not exist\00")
- (data (i32.const 944) "onerror\00")
- (data (i32.const 960) "eosio\00")
- (data (i32.const 976) "onerror action\'s are only valid from the \"eosio\" system account\00")
- (data (i32.const 9440) "malloc_from_freed was designed to only be called after _heap was completely allocated\00")
+ (data (i32.const 512) "escrow\00")
+ (data (i32.const 528) "no balance object found\00")
+ (data (i32.const 560) "overdrawn balance\00")
+ (data (i32.const 592) "object passed to erase is not in multi_index\00")
+ (data (i32.const 640) "cannot erase objects in table of another contract\00")
+ (data (i32.const 704) "attempt to remove object that was not in multi_index\00")
+ (data (i32.const 768) "spender account does not exist\00")
+ (data (i32.const 800) "from account does not exist\00")
+ (data (i32.const 832) "transfer is not allowed\00")
+ (data (i32.const 864) "no allowance object found\00")
+ (data (i32.const 896) "overdrawn amount\00")
+ (data (i32.const 928) "to account does not exist\00")
+ (data (i32.const 960) "onerror\00")
+ (data (i32.const 976) "eosio\00")
+ (data (i32.const 992) "onerror action\'s are only valid from the \"eosio\" system account\00")
+ (data (i32.const 9456) "malloc_from_freed was designed to only be called after _heap was completely allocated\00")
  (export "memory" (memory $0))
  (export "_ZeqRK11checksum256S1_" (func $_ZeqRK11checksum256S1_))
  (export "_ZeqRK11checksum160S1_" (func $_ZeqRK11checksum160S1_))
@@ -67,7 +68,7 @@
  (export "_ZN5eosio12require_authERKNS_16permission_levelE" (func $_ZN5eosio12require_authERKNS_16permission_levelE))
  (export "_ZN7heymate10reputation4mintEyy" (func $_ZN7heymate10reputation4mintEyy))
  (export "_ZN7heymate10reputation11add_balanceEyy" (func $_ZN7heymate10reputation11add_balanceEyy))
- (export "_ZN7heymate10reputation4burnEyy" (func $_ZN7heymate10reputation4burnEyy))
+ (export "_ZN7heymate10reputation4burnEyyy" (func $_ZN7heymate10reputation4burnEyyy))
  (export "_ZN7heymate10reputation11sub_balanceEyy" (func $_ZN7heymate10reputation11sub_balanceEyy))
  (export "_ZN7heymate10reputation7approveEyyy" (func $_ZN7heymate10reputation7approveEyyy))
  (export "_ZN7heymate10reputation13add_allowanceEyyy" (func $_ZN7heymate10reputation13add_allowanceEyyy))
@@ -1338,29 +1339,167 @@
    )
   )
  )
- (func $_ZN7heymate10reputation4burnEyy (type $FUNCSIG$vijj) (param $0 i32) (param $1 i64) (param $2 i64)
-  (call $require_auth
-   (i64.load
-    (get_local $0)
+ (func $_ZN7heymate10reputation4burnEyyy (type $FUNCSIG$vijjj) (param $0 i32) (param $1 i64) (param $2 i64) (param $3 i64)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i64)
+  (local $7 i64)
+  (local $8 i64)
+  (local $9 i64)
+  (set_local $7
+   (i64.const 0)
+  )
+  (set_local $6
+   (i64.const 59)
+  )
+  (set_local $5
+   (i32.const 512)
+  )
+  (set_local $8
+   (i64.const 0)
+  )
+  (loop $label$0
+   (block $label$1
+    (block $label$2
+     (block $label$3
+      (block $label$4
+       (block $label$5
+        (br_if $label$5
+         (i64.gt_u
+          (get_local $7)
+          (i64.const 5)
+         )
+        )
+        (br_if $label$4
+         (i32.gt_u
+          (i32.and
+           (i32.add
+            (tee_local $4
+             (i32.load8_s
+              (get_local $5)
+             )
+            )
+            (i32.const -97)
+           )
+           (i32.const 255)
+          )
+          (i32.const 25)
+         )
+        )
+        (set_local $4
+         (i32.add
+          (get_local $4)
+          (i32.const 165)
+         )
+        )
+        (br $label$3)
+       )
+       (set_local $9
+        (i64.const 0)
+       )
+       (br_if $label$2
+        (i64.le_u
+         (get_local $7)
+         (i64.const 11)
+        )
+       )
+       (br $label$1)
+      )
+      (set_local $4
+       (select
+        (i32.add
+         (get_local $4)
+         (i32.const 208)
+        )
+        (i32.const 0)
+        (i32.lt_u
+         (i32.and
+          (i32.add
+           (get_local $4)
+           (i32.const -49)
+          )
+          (i32.const 255)
+         )
+         (i32.const 5)
+        )
+       )
+      )
+     )
+     (set_local $9
+      (i64.shr_s
+       (i64.shl
+        (i64.extend_u/i32
+         (get_local $4)
+        )
+        (i64.const 56)
+       )
+       (i64.const 56)
+      )
+     )
+    )
+    (set_local $9
+     (i64.shl
+      (i64.and
+       (get_local $9)
+       (i64.const 31)
+      )
+      (i64.and
+       (get_local $6)
+       (i64.const 4294967295)
+      )
+     )
+    )
    )
+   (set_local $5
+    (i32.add
+     (get_local $5)
+     (i32.const 1)
+    )
+   )
+   (set_local $7
+    (i64.add
+     (get_local $7)
+     (i64.const 1)
+    )
+   )
+   (set_local $8
+    (i64.or
+     (get_local $9)
+     (get_local $8)
+    )
+   )
+   (br_if $label$0
+    (i64.ne
+     (tee_local $6
+      (i64.add
+       (get_local $6)
+       (i64.const -5)
+      )
+     )
+     (i64.const -6)
+    )
+   )
+  )
+  (call $require_auth
+   (get_local $8)
   )
   (call $eosio_assert
    (i64.ne
-    (get_local $2)
+    (get_local $3)
     (i64.const 0)
    )
    (i32.const 16)
   )
   (call $eosio_assert
    (call $is_account
-    (get_local $1)
+    (get_local $2)
    )
    (i32.const 64)
   )
   (call $_ZN7heymate10reputation11sub_balanceEyy
    (get_local $0)
-   (get_local $1)
    (get_local $2)
+   (get_local $3)
   )
  )
  (func $_ZN7heymate10reputation11sub_balanceEyy (param $0 i32) (param $1 i64) (param $2 i64)
@@ -1417,13 +1556,13 @@
         (i32.const 8)
        )
        (get_local $1)
-       (i32.const 512)
+       (i32.const 528)
       )
      )
     )
     (get_local $2)
    )
-   (i32.const 544)
+   (i32.const 560)
   )
   (block $label$0
    (block $label$1
@@ -1818,7 +1957,7 @@
     )
     (get_local $0)
    )
-   (i32.const 576)
+   (i32.const 592)
   )
   (call $eosio_assert
    (i64.eq
@@ -1827,7 +1966,7 @@
     )
     (call $current_receiver)
    )
-   (i32.const 624)
+   (i32.const 640)
   )
   (block $label$0
    (br_if $label$0
@@ -1904,7 +2043,7 @@
     (get_local $7)
     (get_local $3)
    )
-   (i32.const 688)
+   (i32.const 704)
   )
   (set_local $8
    (i32.add
@@ -2072,7 +2211,7 @@
    (call $is_account
     (get_local $2)
    )
-   (i32.const 752)
+   (i32.const 768)
   )
   (call $eosio_assert
    (i64.ne
@@ -3280,7 +3419,7 @@
    (call $is_account
     (get_local $1)
    )
-   (i32.const 784)
+   (i32.const 800)
   )
   (call $eosio_assert
    (i64.ne
@@ -3296,7 +3435,7 @@
     (get_local $2)
     (get_local $3)
    )
-   (i32.const 816)
+   (i32.const 832)
   )
   (call $_ZN7heymate10reputation11add_balanceEyy
    (get_local $0)
@@ -3545,13 +3684,13 @@
         (i32.const 8)
        )
        (get_local $2)
-       (i32.const 848)
+       (i32.const 864)
       )
      )
     )
     (get_local $3)
    )
-   (i32.const 880)
+   (i32.const 896)
   )
   (block $label$0
    (block $label$1
@@ -3946,7 +4085,7 @@
     )
     (get_local $0)
    )
-   (i32.const 576)
+   (i32.const 592)
   )
   (call $eosio_assert
    (i64.eq
@@ -3955,7 +4094,7 @@
     )
     (call $current_receiver)
    )
-   (i32.const 624)
+   (i32.const 640)
   )
   (block $label$0
    (br_if $label$0
@@ -4032,7 +4171,7 @@
     (get_local $7)
     (get_local $3)
    )
-   (i32.const 688)
+   (i32.const 704)
   )
   (set_local $8
    (i32.add
@@ -4200,7 +4339,7 @@
    (call $is_account
     (get_local $2)
    )
-   (i32.const 912)
+   (i32.const 928)
   )
   (call $eosio_assert
    (i64.ne
@@ -4246,7 +4385,7 @@
    (i64.const 59)
   )
   (set_local $4
-   (i32.const 944)
+   (i32.const 960)
   )
   (set_local $7
    (i64.const 0)
@@ -4387,7 +4526,7 @@
     (i64.const 59)
    )
    (set_local $4
-    (i32.const 960)
+    (i32.const 976)
    )
    (set_local $7
     (i64.const 0)
@@ -4519,7 +4658,7 @@
      (get_local $7)
      (get_local $1)
     )
-    (i32.const 976)
+    (i32.const 992)
    )
   )
   (block $label$13
@@ -4537,7 +4676,7 @@
      (i64.const 59)
     )
     (set_local $4
-     (i32.const 944)
+     (i32.const 960)
     )
     (set_local $7
      (i64.const 0)
@@ -4718,7 +4857,7 @@
         )
        )
        (drop
-        (call $_ZN5eosio14execute_actionIN7heymate10reputationES2_JyyEEEbPT_MT0_FvDpT1_E
+        (call $_ZN5eosio14execute_actionIN7heymate10reputationES2_JyyyEEEbPT_MT0_FvDpT1_E
          (i32.add
           (get_local $9)
           (i32.const 88)
@@ -5301,7 +5440,7 @@
  )
  (func $malloc (param $0 i32) (result i32)
   (call $_ZN5eosio14memory_manager6mallocEm
-   (i32.const 1040)
+   (i32.const 1056)
    (get_local $0)
   )
  )
@@ -5546,7 +5685,7 @@
          )
         )
        )
-       (i32.const 9440)
+       (i32.const 9456)
       )
       (set_local $13
        (i32.add
@@ -5770,13 +5909,13 @@
    (block $label$1
     (br_if $label$1
      (i32.eqz
-      (i32.load8_u offset=9526
+      (i32.load8_u offset=9542
        (i32.const 0)
       )
      )
     )
     (set_local $7
-     (i32.load offset=9528
+     (i32.load offset=9544
       (i32.const 0)
      )
     )
@@ -5785,11 +5924,11 @@
    (set_local $7
     (current_memory)
    )
-   (i32.store8 offset=9526
+   (i32.store8 offset=9542
     (i32.const 0)
     (i32.const 1)
    )
-   (i32.store offset=9528
+   (i32.store offset=9544
     (i32.const 0)
     (tee_local $7
      (i32.shl
@@ -5840,7 +5979,7 @@
        )
       )
       (set_local $3
-       (i32.load offset=9528
+       (i32.load offset=9544
         (i32.const 0)
        )
       )
@@ -5848,7 +5987,7 @@
      (set_local $8
       (i32.const 0)
      )
-     (i32.store offset=9528
+     (i32.store offset=9544
       (i32.const 0)
       (get_local $3)
      )
@@ -5902,18 +6041,18 @@
      )
      (block $label$6
       (br_if $label$6
-       (i32.load8_u offset=9526
+       (i32.load8_u offset=9542
         (i32.const 0)
        )
       )
       (set_local $3
        (current_memory)
       )
-      (i32.store8 offset=9526
+      (i32.store8 offset=9542
        (i32.const 0)
        (i32.const 1)
       )
-      (i32.store offset=9528
+      (i32.store offset=9544
        (i32.const 0)
        (tee_local $3
         (i32.shl
@@ -5981,12 +6120,12 @@
        )
       )
       (set_local $6
-       (i32.load offset=9528
+       (i32.load offset=9544
         (i32.const 0)
        )
       )
      )
-     (i32.store offset=9528
+     (i32.store offset=9544
       (i32.const 0)
       (i32.add
        (get_local $6)
@@ -6246,7 +6385,7 @@
     (br_if $label$1
      (i32.lt_s
       (tee_local $2
-       (i32.load offset=9424
+       (i32.load offset=9440
         (i32.const 0)
        )
       )
@@ -6254,7 +6393,7 @@
      )
     )
     (set_local $3
-     (i32.const 9232)
+     (i32.const 9248)
     )
     (set_local $1
      (i32.add
@@ -6262,7 +6401,7 @@
        (get_local $2)
        (i32.const 12)
       )
-      (i32.const 9232)
+      (i32.const 9248)
      )
     )
     (loop $label$2
@@ -6354,7 +6493,7 @@
     (br_if $label$0
      (i32.eqz
       (tee_local $2
-       (i32.load offset=9532
+       (i32.load offset=9548
         (i32.const 0)
        )
       )

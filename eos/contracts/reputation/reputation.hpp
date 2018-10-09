@@ -12,7 +12,7 @@ namespace heymate {
 
       void mint(account_name account, uint64_t amount);
 
-      void burn(account_name account, uint64_t amount);
+      void burn(account_name caller, account_name account, uint64_t amount);
 
       void approve(account_name owner, account_name spender, uint64_t amount);
 
