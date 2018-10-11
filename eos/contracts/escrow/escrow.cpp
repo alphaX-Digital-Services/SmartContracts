@@ -72,7 +72,7 @@ void escrow::release(uint64_t id)
   eosio::action(
     permission_level{ _self, N(active) },
     N(reputation), N(burn),
-    std::make_tuple(_self, found_job.worker, found_job.reputation) //account_name owner, uint64_t amount
+    std::make_tuple(_self, _self, found_job.reputation) //account_name owner, uint64_t amount
   ).send();
 }
 
