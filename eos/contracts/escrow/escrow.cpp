@@ -70,7 +70,7 @@ ACTION escrow::release(uint64_t id)
   eosio::action(
     permission_level{ _self, "active"_n },
     "reputation"_n, "burn"_n,
-    std::make_tuple(_self.value, found_job.worker.value, found_job.reputation) //name owner, uint64_t amount
+    std::make_tuple(_self.value, _self.value, found_job.reputation) //name owner, uint64_t amount
   ).send();
 }
 
@@ -96,7 +96,7 @@ ACTION escrow::refund(uint64_t id)
   eosio::action(
     permission_level{ _self, "active"_n },
     "reputation"_n, "burn"_n,
-    std::make_tuple(found_job.worker.value, found_job.reputation) //name owner, uint64_t amount
+    std::make_tuple(_self.value, found_job.worker.value, found_job.reputation) //name owner, uint64_t amount
   ).send();
 }
 
