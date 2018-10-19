@@ -6,48 +6,42 @@ using namespace eosio;
 
 namespace heymate {
 
-  class pay : public contract {
+  CONTRACT pay : public contract {
+    using contract::contract;
+
     public:
-      pay(account_name self):contract(self){}
+      ACTION mint(name account, uint64_t amount);
 
-      void mint(account_name account, uint64_t amount);
+      ACTION approve(name owner, name spender, uint64_t amount);
 
-      void approve(account_name owner, account_name spender, uint64_t amount);
+      ACTION transferto(name from, name to, uint64_t amount);
 
-      void transferto(account_name from, account_name to, uint64_t amount);
-
-      void transfer(account_name from, account_name to, uint64_t amount);
+      ACTION transfer(name from, name to, uint64_t amount);
     private:
 
-      //@abi table accounts i64
-      struct account {
-        account_name owner;
+      TABLE account {
+        name owner;
         uint64_t balance;
 
-        uint64_t primary_key()const { return owner; }
-
-        EOSLIB_SERIALIZE(account, (owner)(balance));
+        uint64_t primary_key() const { return owner.value; }
       };
 
-      //@abi table allowances i64
-      struct allowance {
-        account_name spender;
+      TABLE allowance {
+        name spender;
         uint64_t amount;
 
-        uint64_t primary_key()const { return spender; }
-
-        EOSLIB_SERIALIZE(allowance, (spender)(amount));
+        uint64_t primary_key() const { return spender.value; }
       };
 
-      typedef eosio::multi_index<N(accounts), account> accounts_index;
-      typedef eosio::multi_index<N(allowances), allowance> allowances_index;
+      typedef multi_index<"accounts"_n, account> accounts_index;
+      typedef multi_index<"allowances"_n, allowance> allowances_index;
 
-      bool transfer_allowed(account_name from, account_name to, uint64_t amount);
+      bool transfer_allowed(name from, name to, uint64_t amount);
 
-      void sub_balance(account_name owner, uint64_t value);
-      void add_balance(account_name owner, uint64_t value);
+      void sub_balance(name owner, uint64_t value);
+      void add_balance(name owner, uint64_t value);
 
-      void add_allowance(account_name owner, account_name spender, uint64_t value);
-      void sub_allowance(account_name owner, account_name spender, uint64_t value);
+      void add_allowance(name owner, name spender, uint64_t value);
+      void sub_allowance(name owner, name spender, uint64_t value);
    };
 } /// namespace heymate

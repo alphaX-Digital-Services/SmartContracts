@@ -1,4 +1,3 @@
 #!/bin/bash
 
-eosiocpp -o reputation.wast reputation.cpp
-eosiocpp -g reputation.abi reputation.cpp
+eosio-cpp -abigen reputation.cpp -o reputation.wasm

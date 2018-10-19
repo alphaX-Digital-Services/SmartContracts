@@ -6,38 +6,35 @@ using namespace eosio;
 
 namespace heymate {
 
-  class escrow : public contract {
-    public:
-      escrow(account_name self):contract(self){}
+  CONTRACT escrow : public contract {
+    using contract::contract;
 
-      void create(
+    public:
+      ACTION create(
         uint64_t id, 
-        account_name client, 
-        account_name worker, 
+        name client, 
+        name worker, 
         uint64_t escrow, 
         uint64_t reputation
       );
 
-      void release(uint64_t id);
+      ACTION release(uint64_t id);
 
-      void refund(uint64_t id);
+      ACTION refund(uint64_t id);
 
     private:
-      //@abi table jobs i64
-      struct job {
+      TABLE job {
         uint64_t id;
-        account_name client;
-        account_name worker;
+        name client;
+        name worker;
         uint64_t escrow;
         uint64_t reputation;
         bool success;
         bool complete;
 
-        uint64_t primary_key()const { return id; }
-
-        EOSLIB_SERIALIZE(job, (id)(client)(worker)(escrow)(reputation)(success)(complete));
+        uint64_t primary_key() const { return id; }
       };
 
-      typedef eosio::multi_index<N(jobs), job> jobs_index;
+      typedef multi_index<"jobs"_n, job> jobs_index;
    };
 } /// namespace heymate
