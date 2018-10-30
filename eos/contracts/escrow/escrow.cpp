@@ -31,20 +31,6 @@ ACTION escrow::create(
     job.success = false;
     job.complete = false;
   });
-
-  //transfer HEY to escrow
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "pay"_n, "transferto"_n,
-    std::make_tuple(client.value, _self.value, escrow)
-  ).send();
-
-  //transfer HMR to escrow
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "reputation"_n, "transferto"_n,
-    std::make_tuple(worker.value, _self.value, reputation)
-  ).send();
 }
 
 ACTION escrow::release(uint64_t id)
@@ -63,14 +49,14 @@ ACTION escrow::release(uint64_t id)
   //Call HEY transfer to the worker
   eosio::action(
     permission_level{ _self, "active"_n },
-    "pay"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.worker.value, found_job.escrow)
+    "eosio.token"_n, "transfer"_n,
+    std::make_tuple(_self.value, found_job.worker.value, asset(found_job.escrow, symbol(symbol_code("HEY"), 4)), "")
   ).send();
   //Call HMR burn for the worker
   eosio::action(
     permission_level{ _self, "active"_n },
     "reputation"_n, "burn"_n,
-    std::make_tuple(_self.value, _self.value, found_job.reputation) //name owner, uint64_t amount
+    std::make_tuple(_self.value, found_job.reputation) //name owner, uint64_t amount
   ).send();
 }
 
@@ -90,13 +76,13 @@ ACTION escrow::refund(uint64_t id)
   eosio::action(
     permission_level{ _self, "active"_n },
     "pay"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.client.value, found_job.escrow)
+    std::make_tuple(_self.value, found_job.client.value, asset(found_job.escrow, symbol(symbol_code("HEY"), 4)), "")
   ).send();
   //Call HMR burn for the worker
   eosio::action(
     permission_level{ _self, "active"_n },
     "reputation"_n, "burn"_n,
-    std::make_tuple(_self.value, found_job.worker.value, found_job.reputation) //name owner, uint64_t amount
+    std::make_tuple(_self.value, found_job.reputation) //name owner, uint64_t amount
   ).send();
 }
 
