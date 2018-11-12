@@ -3,10 +3,10 @@
 namespace heymate {
 
 ACTION escrow::create(
-  uint64_t id, 
-  name client, 
-  name worker, 
-  uint64_t escrow, 
+  uint64_t id,
+  name client,
+  name worker,
+  uint64_t escrow,
   uint64_t reputation
 ) {
   require_auth(_self);
@@ -31,6 +31,13 @@ ACTION escrow::create(
     job.success = false;
     job.complete = false;
   });
+
+  //Call HMR burn for the worker
+  eosio::action(
+    permission_level{ _self, "active"_n },
+    "reputation"_n, "burn"_n,
+    std::make_tuple(worker, reputation) //name owner, uint64_t amount
+  ).send();
 }
 
 ACTION escrow::release(uint64_t id)
@@ -45,18 +52,12 @@ ACTION escrow::release(uint64_t id)
     job.complete = true;
     job.success = true;
   });
-  
+
   //Call HEY transfer to the worker
   eosio::action(
     permission_level{ _self, "active"_n },
     "eosio.token"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.worker.value, asset(found_job.escrow, symbol(symbol_code("HEY"), 4)), "")
-  ).send();
-  //Call HMR burn for the worker
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "reputation"_n, "burn"_n,
-    std::make_tuple(_self.value, found_job.reputation) //name owner, uint64_t amount
+    std::make_tuple(_self.value, found_job.worker.value, asset(found_job.escrow, symbol(symbol_code("HEY"), 4)), std::string(""))
   ).send();
 }
 
@@ -75,14 +76,8 @@ ACTION escrow::refund(uint64_t id)
   //Call HEY transfer back to the client
   eosio::action(
     permission_level{ _self, "active"_n },
-    "pay"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.client.value, asset(found_job.escrow, symbol(symbol_code("HEY"), 4)), "")
-  ).send();
-  //Call HMR burn for the worker
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "reputation"_n, "burn"_n,
-    std::make_tuple(_self.value, found_job.reputation) //name owner, uint64_t amount
+    "eosio.token"_n, "transfer"_n,
+    std::make_tuple(_self.value, found_job.client.value, asset(found_job.escrow, symbol(symbol_code("HEY"), 4)), std::string(""))
   ).send();
 }
 
