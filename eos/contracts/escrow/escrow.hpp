@@ -13,10 +13,10 @@ namespace heymate {
 
     public:
       ACTION create(
-        uint64_t id, 
-        name client, 
-        name worker, 
-        uint64_t escrow, 
+        uint64_t id,
+        name client,
+        name worker,
+        double escrow, 
         uint64_t reputation
       );
 

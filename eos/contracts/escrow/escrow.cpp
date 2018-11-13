@@ -6,7 +6,7 @@ ACTION escrow::create(
   uint64_t id,
   name client,
   name worker,
-  uint64_t escrow,
+  double escrow,
   uint64_t reputation
 ) {
   require_auth(_self);
