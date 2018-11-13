@@ -16,7 +16,7 @@ namespace heymate {
         uint64_t id,
         name client,
         name worker,
-        double escrow, 
+        double escrow,
         uint64_t reputation
       );
 
@@ -29,7 +29,7 @@ namespace heymate {
         uint64_t id;
         name client;
         name worker;
-        uint64_t escrow;
+        double escrow;
         uint64_t reputation;
         bool success;
         bool complete;
