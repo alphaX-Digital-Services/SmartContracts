@@ -20,7 +20,7 @@ namespace heymate {
         uint64_t reputation
       );
 
-      ACTION release(uint64_t id);
+      ACTION release(uint64_t id, uint64_t reputation);
 
       ACTION refund(uint64_t id);
 

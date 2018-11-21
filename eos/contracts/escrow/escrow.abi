@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Nov 14 13:14:24 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Wed Nov 21 12:28:19 2018",
     "version": "eosio::abi/1.0",
     "structs": [
         {
@@ -78,6 +78,10 @@
             "fields": [
                 {
                     "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "reputation",
                     "type": "uint64"
                 }
             ]

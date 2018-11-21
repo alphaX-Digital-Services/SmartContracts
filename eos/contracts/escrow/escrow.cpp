@@ -40,7 +40,7 @@ ACTION escrow::create(
   ).send();
 }
 
-ACTION escrow::release(uint64_t id)
+ACTION escrow::release(uint64_t id, uint64_t reputation)
 {
   require_auth(_self.value);
 
@@ -58,6 +58,13 @@ ACTION escrow::release(uint64_t id)
     permission_level{ _self, "active"_n },
     "eosio.token"_n, "transfer"_n,
     std::make_tuple(_self.value, found_job.worker.value, asset((found_job.escrow * 10000), symbol(symbol_code("HEY"), 4)), std::string(""))
+  ).send();
+
+  //Call reputation mint for the worker
+  eosio::action(
+    permission_level{_self, "active"_n},
+    "reputation"_n, "mint"_n,
+    std::make_tuple(found_job.worker.value, reputation)
   ).send();
 }
 
