@@ -64,7 +64,7 @@ ACTION escrow::release(uint64_t id, uint64_t reputation)
   eosio::action(
     permission_level{_self, "active"_n},
     "reputation"_n, "mint"_n,
-    std::make_tuple(found_job.worker, reputation)
+    std::make_tuple(found_job.worker.value, reputation)
   ).send();
 }
 
