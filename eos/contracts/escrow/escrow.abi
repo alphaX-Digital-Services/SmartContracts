@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Nov 22 19:12:26 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Nov 29 17:52:27 2018",
     "version": "eosio::abi/1.0",
     "structs": [
         {
@@ -20,7 +20,7 @@
                 },
                 {
                     "name": "escrow",
-                    "type": "float32"
+                    "type": "uint64"
                 },
                 {
                     "name": "reputation",
@@ -46,7 +46,7 @@
                 },
                 {
                     "name": "escrow",
-                    "type": "float32"
+                    "type": "uint64"
                 },
                 {
                     "name": "reputation",
@@ -68,6 +68,10 @@
             "fields": [
                 {
                     "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "cancellationLogic",
                     "type": "uint64"
                 }
             ]

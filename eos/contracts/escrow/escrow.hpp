@@ -16,20 +16,20 @@ namespace heymate {
         uint64_t id,
         name client,
         name worker,
-        float escrow,
+        uint64_t escrow,
         uint64_t reputation
       );
 
       ACTION release(uint64_t id, uint64_t reputation);
 
-      ACTION refund(uint64_t id);
+      ACTION refund(uint64_t id, uint64_t cancellationLogic);
 
     private:
       TABLE job {
         uint64_t id;
         name client;
         name worker;
-        float escrow;
+        uint64_t escrow;
         uint64_t reputation;
         bool success;
         bool complete;
@@ -38,5 +38,8 @@ namespace heymate {
       };
 
       typedef multi_index<"jobs"_n, job> jobs_index;
+
+      void transfer_token(name client, uint64_t escrow);
+      void mint_reputation(name worker, uint64_t amount);
    };
 } /// namespace heymate

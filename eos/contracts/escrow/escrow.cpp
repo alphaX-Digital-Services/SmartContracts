@@ -6,7 +6,7 @@ ACTION escrow::create(
   uint64_t id,
   name client,
   name worker,
-  float escrow,
+  uint64_t escrow,
   uint64_t reputation
 ) {
   require_auth(_self);
@@ -53,22 +53,11 @@ ACTION escrow::release(uint64_t id, uint64_t reputation)
     job.success = true;
   });
 
-  //Call HEY transfer to the worker
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "eosio.token"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.worker.value, asset((found_job.escrow * 10000), symbol(symbol_code("HEY"), 4)), std::string(""))
-  ).send();
-
-  //Call reputation mint for the worker
-  eosio::action(
-    permission_level{_self, "active"_n},
-    "reputation"_n, "mint"_n,
-    std::make_tuple(found_job.worker.value, reputation)
-  ).send();
+  transfer_token(found_job.worker, found_job.escrow);
+  mint_reputation(found_job.worker, reputation);
 }
 
-ACTION escrow::refund(uint64_t id)
+ACTION escrow::refund(uint64_t id, uint64_t cancellationLogic)
 {
   require_auth(_self.value);
 
@@ -80,11 +69,40 @@ ACTION escrow::refund(uint64_t id)
     job.complete = true;
   });
 
+  switch (cancellationLogic) {
+    case 1: {
+      transfer_token(found_job.client, found_job.escrow);
+      break;
+    }
+    case 2: {
+      mint_reputation(found_job.worker, found_job.reputation);
+      break;
+    }
+    default: {
+      transfer_token(found_job.client, found_job.escrow);
+      mint_reputation(found_job.worker, found_job.reputation);
+      break;
+    }
+  }
+
+}
+
+void escrow::transfer_token(name client, uint64_t escrow)
+{
   //Call HEY transfer back to the client
   eosio::action(
     permission_level{ _self, "active"_n },
     "eosio.token"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.client.value, asset((found_job.escrow  * 10000) , symbol(symbol_code("HEY"), 4)), std::string(""))
+    std::make_tuple(_self.value, client, asset((escrow  * 10000) , symbol(symbol_code("HEY"), 4)), std::string(""))
+  ).send();
+}
+void escrow::mint_reputation(name worker, uint64_t amount)
+{
+  //Call reputation mint for the worker
+  eosio::action(
+    permission_level{_self, "active"_n},
+    "reputation"_n, "mint"_n,
+    std::make_tuple(worker, amount)
   ).send();
 }
 
