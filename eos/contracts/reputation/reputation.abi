@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Oct 18 18:41:12 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Nov 13 19:04:03 2018",
     "version": "eosio::abi/1.0",
     "structs": [
         {
@@ -17,45 +17,9 @@
             ]
         },
         {
-            "name": "allowance",
-            "base": "",
-            "fields": [
-                {
-                    "name": "spender",
-                    "type": "name"
-                },
-                {
-                    "name": "amount",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "approve",
-            "base": "",
-            "fields": [
-                {
-                    "name": "owner",
-                    "type": "name"
-                },
-                {
-                    "name": "spender",
-                    "type": "name"
-                },
-                {
-                    "name": "amount",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
             "name": "burn",
             "base": "",
             "fields": [
-                {
-                    "name": "caller",
-                    "type": "name"
-                },
                 {
                     "name": "account",
                     "type": "name"
@@ -82,24 +46,6 @@
         },
         {
             "name": "transfer",
-            "base": "",
-            "fields": [
-                {
-                    "name": "from",
-                    "type": "name"
-                },
-                {
-                    "name": "to",
-                    "type": "name"
-                },
-                {
-                    "name": "amount",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "transferto",
             "base": "",
             "fields": [
                 {
@@ -120,11 +66,6 @@
     "types": [],
     "actions": [
         {
-            "name": "approve",
-            "type": "approve",
-            "ricardian_contract": ""
-        },
-        {
             "name": "burn",
             "type": "burn",
             "ricardian_contract": ""
@@ -138,24 +79,12 @@
             "name": "transfer",
             "type": "transfer",
             "ricardian_contract": ""
-        },
-        {
-            "name": "transferto",
-            "type": "transferto",
-            "ricardian_contract": ""
         }
     ],
     "tables": [
         {
             "name": "accounts",
             "type": "account",
-            "index_type": "i64",
-            "key_names": [],
-            "key_types": []
-        },
-        {
-            "name": "allowances",
-            "type": "allowance",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

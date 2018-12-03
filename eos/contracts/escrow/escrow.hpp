@@ -1,6 +1,8 @@
 #pragma once
 
 #include <eosiolib/eosio.hpp>
+#include <eosiolib/asset.hpp>
+#include <eosiolib/symbol.hpp>
 
 using namespace eosio;
 
@@ -11,16 +13,16 @@ namespace heymate {
 
     public:
       ACTION create(
-        uint64_t id, 
-        name client, 
-        name worker, 
-        uint64_t escrow, 
+        uint64_t id,
+        name client,
+        name worker,
+        uint64_t escrow,
         uint64_t reputation
       );
 
-      ACTION release(uint64_t id);
+      ACTION release(uint64_t id, uint64_t reputation);
 
-      ACTION refund(uint64_t id);
+      ACTION refund(uint64_t id, uint64_t cancellationLogic);
 
     private:
       TABLE job {
@@ -36,5 +38,8 @@ namespace heymate {
       };
 
       typedef multi_index<"jobs"_n, job> jobs_index;
+
+      void transfer_token(name client, uint64_t escrow);
+      void mint_reputation(name worker, uint64_t amount);
    };
 } /// namespace heymate

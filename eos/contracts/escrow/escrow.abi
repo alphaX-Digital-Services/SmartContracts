@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Oct 18 18:40:58 2018",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Nov 29 17:52:27 2018",
     "version": "eosio::abi/1.0",
     "structs": [
         {
@@ -69,6 +69,10 @@
                 {
                     "name": "id",
                     "type": "uint64"
+                },
+                {
+                    "name": "cancellationLogic",
+                    "type": "uint64"
                 }
             ]
         },
@@ -78,6 +82,10 @@
             "fields": [
                 {
                     "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "reputation",
                     "type": "uint64"
                 }
             ]

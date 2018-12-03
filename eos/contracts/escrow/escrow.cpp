@@ -3,10 +3,10 @@
 namespace heymate {
 
 ACTION escrow::create(
-  uint64_t id, 
-  name client, 
-  name worker, 
-  uint64_t escrow, 
+  uint64_t id,
+  name client,
+  name worker,
+  uint64_t escrow,
   uint64_t reputation
 ) {
   require_auth(_self);
@@ -32,22 +32,15 @@ ACTION escrow::create(
     job.complete = false;
   });
 
-  //transfer HEY to escrow
+  //Call HMR burn for the worker
   eosio::action(
     permission_level{ _self, "active"_n },
-    "pay"_n, "transferto"_n,
-    std::make_tuple(client.value, _self.value, escrow)
-  ).send();
-
-  //transfer HMR to escrow
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "reputation"_n, "transferto"_n,
-    std::make_tuple(worker.value, _self.value, reputation)
+    "reputation"_n, "burn"_n,
+    std::make_tuple(worker, reputation) //name owner, uint64_t amount
   ).send();
 }
 
-ACTION escrow::release(uint64_t id)
+ACTION escrow::release(uint64_t id, uint64_t reputation)
 {
   require_auth(_self.value);
 
@@ -59,22 +52,12 @@ ACTION escrow::release(uint64_t id)
     job.complete = true;
     job.success = true;
   });
-  
-  //Call HEY transfer to the worker
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "pay"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.worker.value, found_job.escrow)
-  ).send();
-  //Call HMR burn for the worker
-  eosio::action(
-    permission_level{ _self, "active"_n },
-    "reputation"_n, "burn"_n,
-    std::make_tuple(_self.value, _self.value, found_job.reputation) //name owner, uint64_t amount
-  ).send();
+
+  transfer_token(found_job.worker, found_job.escrow);
+  mint_reputation(found_job.worker, reputation);
 }
 
-ACTION escrow::refund(uint64_t id)
+ACTION escrow::refund(uint64_t id, uint64_t cancellationLogic)
 {
   require_auth(_self.value);
 
@@ -86,17 +69,40 @@ ACTION escrow::refund(uint64_t id)
     job.complete = true;
   });
 
+  switch (cancellationLogic) {
+    case 1: {
+      transfer_token(found_job.client, found_job.escrow);
+      break;
+    }
+    case 2: {
+      mint_reputation(found_job.worker, found_job.reputation);
+      break;
+    }
+    default: {
+      transfer_token(found_job.client, found_job.escrow);
+      mint_reputation(found_job.worker, found_job.reputation);
+      break;
+    }
+  }
+
+}
+
+void escrow::transfer_token(name client, uint64_t escrow)
+{
   //Call HEY transfer back to the client
   eosio::action(
     permission_level{ _self, "active"_n },
-    "pay"_n, "transfer"_n,
-    std::make_tuple(_self.value, found_job.client.value, found_job.escrow)
+    "eosio.token"_n, "transfer"_n,
+    std::make_tuple(_self.value, client, asset((escrow  * 10000) , symbol(symbol_code("HEY"), 4)), std::string(""))
   ).send();
-  //Call HMR burn for the worker
+}
+void escrow::mint_reputation(name worker, uint64_t amount)
+{
+  //Call reputation mint for the worker
   eosio::action(
-    permission_level{ _self, "active"_n },
-    "reputation"_n, "burn"_n,
-    std::make_tuple(_self.value, found_job.worker.value, found_job.reputation) //name owner, uint64_t amount
+    permission_level{_self, "active"_n},
+    "reputation"_n, "mint"_n,
+    std::make_tuple(worker, amount)
   ).send();
 }
 
