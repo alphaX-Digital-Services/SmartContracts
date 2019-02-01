@@ -54,6 +54,8 @@ namespace heymate {
 
       ACTION status(uint64_t id, string status, string history);
 
+      ACTION deletejob();
+
     private:
       TABLE job {
         uint64_t id;

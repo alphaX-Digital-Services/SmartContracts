@@ -107,6 +107,17 @@ ACTION escrow::refund(uint64_t id, uint64_t cancellationLogic)
 
 }
 
+ACTION escrow::deletejob()
+{
+  require_auth(_self.value);
+
+  jobs_index jobs(_self, _self.value);
+
+  for(auto itr = jobs.begin(); itr != jobs.end();) {
+    itr = jobs.erase(itr);
+  }
+}
+
 statuses escrow::convert(const string& str)
 {
   if(str == "proposal") return proposal;
@@ -152,4 +163,4 @@ void escrow::mint_reputation(name worker, uint64_t amount)
 
 } /// namespace heymate
 
-EOSIO_DISPATCH(heymate::escrow, (create)(release)(refund)(status))
+EOSIO_DISPATCH(heymate::escrow, (create)(release)(refund)(status)(deletejob))

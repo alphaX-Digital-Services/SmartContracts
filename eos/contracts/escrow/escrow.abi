@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Feb  1 12:18:55 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Feb  1 15:03:47 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -27,6 +27,11 @@
                     "type": "uint64"
                 }
             ]
+        },
+        {
+            "name": "deletejob",
+            "base": "",
+            "fields": []
         },
         {
             "name": "job",
@@ -130,6 +135,11 @@
         {
             "name": "create",
             "type": "create",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "deletejob",
+            "type": "deletejob",
             "ricardian_contract": ""
         },
         {
