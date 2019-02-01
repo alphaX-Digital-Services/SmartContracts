@@ -1,6 +1,6 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Nov 29 17:52:27 2018",
-    "version": "eosio::abi/1.0",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Feb  1 12:18:55 2019",
+    "version": "eosio::abi/1.1",
     "structs": [
         {
             "name": "create",
@@ -53,12 +53,28 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "status",
+                    "type": "int8"
+                },
+                {
                     "name": "success",
                     "type": "bool"
                 },
                 {
                     "name": "complete",
                     "type": "bool"
+                },
+                {
+                    "name": "created",
+                    "type": "uint64"
+                },
+                {
+                    "name": "updated",
+                    "type": "uint64"
+                },
+                {
+                    "name": "history",
+                    "type": "string[]"
                 }
             ]
         },
@@ -89,6 +105,24 @@
                     "type": "uint64"
                 }
             ]
+        },
+        {
+            "name": "status",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "name": "history",
+                    "type": "string"
+                }
+            ]
         }
     ],
     "types": [],
@@ -107,6 +141,11 @@
             "name": "release",
             "type": "release",
             "ricardian_contract": ""
+        },
+        {
+            "name": "status",
+            "type": "status",
+            "ricardian_contract": ""
         }
     ],
     "tables": [
@@ -119,5 +158,6 @@
         }
     ],
     "ricardian_clauses": [],
+    "variants": [],
     "abi_extensions": []
 }
