@@ -43,7 +43,7 @@ namespace heymate {
       ACTION refund(uint64_t id, uint64_t cancellationLogic);
 
       ACTION history(uint64_t id, string status, string history);
-
+      //need delete this action before deploy this contract on eos main net
       ACTION deletejob();
 
     private:
@@ -53,7 +53,7 @@ namespace heymate {
         name worker;
         uint64_t escrow;
         uint64_t reputation;
-        char status;
+        uint32_t status;
         bool success;
         bool complete;
         uint64_t created;

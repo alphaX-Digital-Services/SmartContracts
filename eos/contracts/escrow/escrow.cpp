@@ -64,14 +64,14 @@ ACTION escrow::release(uint64_t id, uint64_t reputation)
 ACTION escrow::history(uint64_t id, string status, string history)
 {
   require_auth(_self.value);
-  uint64_t statusNumber = convert(status);
+  uint32_t statusNumber = convert(status);
   eosio_assert(statusNumber, "undefined status");
   jobs_index jobs(_self, _self.value);
   const auto& found_job = jobs.get(id, "no job object found");
   eosio_assert(!found_job.complete, "job is already completed");
 
   jobs.modify(found_job, _self, [&](auto& job){
-    job.status = (char)statusNumber;
+    job.status = statusNumber;
     job.updated = now();
     job.history.push_back(history);
   });
@@ -106,7 +106,7 @@ ACTION escrow::refund(uint64_t id, uint64_t cancellationLogic)
   }
 
 }
-
+//need delete this action before deploy this contract on eos main net
 ACTION escrow::deletejob()
 {
   require_auth(_self.value);
