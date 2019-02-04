@@ -61,7 +61,7 @@ ACTION escrow::release(uint64_t id, uint64_t reputation)
   mint_reputation(found_job.worker, reputation);
 }
 
-ACTION escrow::status(uint64_t id, string status, string history)
+ACTION escrow::history(uint64_t id, string status, string history)
 {
   require_auth(_self.value);
   uint64_t statusNumber = convert(status);
@@ -120,24 +120,14 @@ ACTION escrow::deletejob()
 
 statuses escrow::convert(const string& str)
 {
-  if(str == "proposal") return proposal;
-  else if(str == "acceptedProposal") return acceptedProposal;
-  else if(str == "dealDenied") return dealDenied;
-  else if(str == "started") return started;
-  else if(str == "createEscrowPending") return createEscrowPending;
-  else if(str == "escrowProcessed") return escrowProcessed;
-  else if(str == "suspended") return suspended;
+  if(str == "escrowProcessed") return escrowProcessed;
   else if(str == "completePending") return completePending;
   else if(str == "completed") return completed;
-  else if(str == "applicationDenied") return applicationDenied;
   else if(str == "workerDeliveryConfirmed") return workerDeliveryConfirmed;
   else if(str == "clientDeliveryConfirmed") return clientDeliveryConfirmed;
   else if(str == "clientFeedbackSet") return clientFeedbackSet;
   else if(str == "failPending") return failPending;
   else if(str == "failed") return failed;
-  else if(str == "archived") return archived;
-  else if(str == "workerDeclined") return workerDeclined;
-  else if(str == "clientWithdrawn")return clientWithdrawn;
   else return undefined;
 
 }
@@ -163,4 +153,4 @@ void escrow::mint_reputation(name worker, uint64_t amount)
 
 } /// namespace heymate
 
-EOSIO_DISPATCH(heymate::escrow, (create)(release)(refund)(status)(deletejob))
+EOSIO_DISPATCH(heymate::escrow, (create)(release)(refund)(history)(deletejob))

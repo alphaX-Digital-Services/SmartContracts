@@ -1,5 +1,5 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Fri Feb  1 15:03:47 2019",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Mon Feb  4 13:29:49 2019",
     "version": "eosio::abi/1.1",
     "structs": [
         {
@@ -32,6 +32,24 @@
             "name": "deletejob",
             "base": "",
             "fields": []
+        },
+        {
+            "name": "history",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "name": "history",
+                    "type": "string"
+                }
+            ]
         },
         {
             "name": "job",
@@ -110,24 +128,6 @@
                     "type": "uint64"
                 }
             ]
-        },
-        {
-            "name": "status",
-            "base": "",
-            "fields": [
-                {
-                    "name": "id",
-                    "type": "uint64"
-                },
-                {
-                    "name": "status",
-                    "type": "string"
-                },
-                {
-                    "name": "history",
-                    "type": "string"
-                }
-            ]
         }
     ],
     "types": [],
@@ -143,6 +143,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "history",
+            "type": "history",
+            "ricardian_contract": ""
+        },
+        {
             "name": "refund",
             "type": "refund",
             "ricardian_contract": ""
@@ -150,11 +155,6 @@
         {
             "name": "release",
             "type": "release",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "status",
-            "type": "status",
             "ricardian_contract": ""
         }
     ],

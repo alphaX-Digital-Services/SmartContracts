@@ -16,24 +16,14 @@ namespace heymate {
 
   enum statuses {
     undefined = 0,
-    proposal,
-    acceptedProposal,
-    dealDenied,
-    started,
-    createEscrowPending,
     escrowProcessed,
-    suspended,
     completePending,
     completed,
-    applicationDenied,
     workerDeliveryConfirmed,
     clientDeliveryConfirmed,
     clientFeedbackSet,
     failPending,
     failed,
-    archived,
-    workerDeclined,
-    clientWithdrawn
   } stat;
 
   CONTRACT escrow : public contract {
@@ -52,7 +42,7 @@ namespace heymate {
 
       ACTION refund(uint64_t id, uint64_t cancellationLogic);
 
-      ACTION status(uint64_t id, string status, string history);
+      ACTION history(uint64_t id, string status, string history);
 
       ACTION deletejob();
 
