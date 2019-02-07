@@ -24,6 +24,8 @@ namespace heymate {
 
       ACTION refund(uint64_t id, uint64_t cancellationLogic);
 
+      ACTION deletejob();
+
     private:
       TABLE job {
         uint64_t id;

@@ -1,6 +1,6 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Nov 29 17:52:27 2018",
-    "version": "eosio::abi/1.0",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Feb  7 12:11:23 2019",
+    "version": "eosio::abi/1.1",
     "structs": [
         {
             "name": "create",
@@ -27,6 +27,11 @@
                     "type": "uint64"
                 }
             ]
+        },
+        {
+            "name": "deletejob",
+            "base": "",
+            "fields": []
         },
         {
             "name": "job",
@@ -99,6 +104,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "deletejob",
+            "type": "deletejob",
+            "ricardian_contract": ""
+        },
+        {
             "name": "refund",
             "type": "refund",
             "ricardian_contract": ""
@@ -119,5 +129,6 @@
         }
     ],
     "ricardian_clauses": [],
+    "variants": [],
     "abi_extensions": []
 }
