@@ -43,8 +43,6 @@ namespace heymate {
       ACTION refund(uint64_t id, uint64_t cancellationLogic);
 
       ACTION history(uint64_t id, string status, string history);
-      //need delete this action before deploy this contract on eos main net
-      ACTION deletejob();
 
     private:
       TABLE job {
