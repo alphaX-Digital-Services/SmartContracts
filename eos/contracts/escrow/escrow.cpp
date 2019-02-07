@@ -92,11 +92,18 @@ ACTION escrow::deletejob()
 {
   require_auth(_self.value);
 
-  jobs_index jobs(_self, _self.value);
+  jobs_index jobs (_code, _self.value);
 
-  for(auto itr = jobs.begin(); itr != jobs.end();) {
-    itr = jobs.erase(itr);
+  std::vector <uint64_t> keys;
+  for (auto it = jobs.begin(); it != jobs.end(); it++)
+      keys.push_back ((*it).id);
+
+  for (uint64_t key_id : keys) {
+      auto it = jobs.find (key_id);
+      if (it != jobs.end())
+          jobs.erase (it);
   }
+  
 }
 
 void escrow::transfer_token(name client, uint64_t escrow)
