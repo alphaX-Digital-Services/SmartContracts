@@ -1,6 +1,6 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Nov 29 17:52:27 2018",
-    "version": "eosio::abi/1.0",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Feb  7 12:33:11 2019",
+    "version": "eosio::abi/1.1",
     "structs": [
         {
             "name": "create",
@@ -29,6 +29,24 @@
             ]
         },
         {
+            "name": "history",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "name": "history",
+                    "type": "string"
+                }
+            ]
+        },
+        {
             "name": "job",
             "base": "",
             "fields": [
@@ -53,12 +71,28 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "status",
+                    "type": "uint32"
+                },
+                {
                     "name": "success",
                     "type": "bool"
                 },
                 {
                     "name": "complete",
                     "type": "bool"
+                },
+                {
+                    "name": "created",
+                    "type": "uint64"
+                },
+                {
+                    "name": "updated",
+                    "type": "uint64"
+                },
+                {
+                    "name": "history",
+                    "type": "string[]"
                 }
             ]
         },
@@ -99,6 +133,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "history",
+            "type": "history",
+            "ricardian_contract": ""
+        },
+        {
             "name": "refund",
             "type": "refund",
             "ricardian_contract": ""
@@ -119,5 +158,6 @@
         }
     ],
     "ricardian_clauses": [],
+    "variants": [],
     "abi_extensions": []
 }
