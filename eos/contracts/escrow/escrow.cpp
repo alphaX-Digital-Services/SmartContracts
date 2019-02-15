@@ -1,4 +1,5 @@
 #include "escrow.hpp"
+#include "../config.hpp"
 
 namespace heymate {
 
@@ -39,7 +40,7 @@ ACTION escrow::create(
   //Call HMR burn for the worker
   eosio::action(
     permission_level{ _self, "active"_n },
-    "reputation"_n, "burn"_n,
+    name(REPUTATION), "burn"_n,
     std::make_tuple(worker, reputation) //name owner, uint64_t amount
   ).send();
 }
@@ -68,7 +69,6 @@ ACTION escrow::history(uint64_t id, string status, string history)
   eosio_assert(statusNumber, "undefined status");
   jobs_index jobs(_self, _self.value);
   const auto& found_job = jobs.get(id, "no job object found");
-  eosio_assert(!found_job.complete, "job is already completed");
 
   jobs.modify(found_job, _self, [&](auto& job){
     job.status = statusNumber;
@@ -126,7 +126,7 @@ void escrow::transfer_token(name client, uint64_t escrow)
   //Call HEY transfer back to the client
   eosio::action(
     permission_level{ _self, "active"_n },
-    "eosio.token"_n, "transfer"_n,
+    name(EOSIO_TOKEN), "transfer"_n,
     std::make_tuple(_self.value, client, asset((escrow  * 10000) , symbol(symbol_code("HEY"), 4)), std::string(""))
   ).send();
 }
@@ -135,7 +135,7 @@ void escrow::mint_reputation(name worker, uint64_t amount)
   //Call reputation mint for the worker
   eosio::action(
     permission_level{_self, "active"_n},
-    "reputation"_n, "mint"_n,
+    name(REPUTATION), "mint"_n,
     std::make_tuple(worker, amount)
   ).send();
 }

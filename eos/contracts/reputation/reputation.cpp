@@ -1,10 +1,11 @@
 #include "reputation.hpp"
+#include "../config.hpp"
 
 namespace heymate {
 
 ACTION reputation::mint(name owner, uint64_t amount)
 {
-  require_auth("escrow"_n);
+  require_auth(name(ESCROW).value);
   eosio_assert(amount > 0, "amount should be higher than zero");
   eosio_assert(is_account(owner.value), "owner account does not exist");
 
@@ -13,7 +14,7 @@ ACTION reputation::mint(name owner, uint64_t amount)
 
 ACTION reputation::burn(name owner, uint64_t amount)
 {
-  require_auth("escrow"_n);
+  require_auth(name(ESCROW).value);
   eosio_assert(amount > 0, "amount should be higher than zero");
   eosio_assert(is_account(owner.value), "owner account does not exist");
 
@@ -22,7 +23,7 @@ ACTION reputation::burn(name owner, uint64_t amount)
 
 ACTION reputation::transfer(name from, name to, uint64_t amount)
 {
-  require_auth("escrow"_n);
+  require_auth(name(ESCROW).value);
   eosio_assert(is_account(to), "to account does not exist");
   eosio_assert(amount > 0, "amount should be higher than zero");
 
