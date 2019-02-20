@@ -10,7 +10,7 @@ This project uses [EOSIO](https://developers.eos.io/) is a free, open-source blo
 
 In contract folder run this command for compile dev version:
 ```
-eosio-cpp escrow.cpp -o escrow.wasm --abigen -D=DEV
+eosio-cpp escrow.cpp -o escrow.wasm --abigen
 ```
 
 In contract folder run this command for compile staging version:

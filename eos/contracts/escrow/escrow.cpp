@@ -1,6 +1,9 @@
 #include "escrow.hpp"
-#include "../config.hpp"
-
+#ifdef STAGING
+  #include "../dev-config.hpp"
+#else
+  #include "../staging-config.hpp"
+#endif
 namespace heymate {
 
 using std::string;
