@@ -1,8 +1,8 @@
 #include "reputation.hpp"
 #ifdef STAGING
-  #include "../dev-config.hpp"
-#else
   #include "../staging-config.hpp"
+#else
+  #include "../dev-config.hpp"
 #endif
 
 namespace heymate {
