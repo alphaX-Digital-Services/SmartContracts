@@ -18,16 +18,16 @@ ACTION escrow::create(
 ) {
   require_auth(_self);
 
-  eosio_assert(is_account(client.value), "client account does not exist");
-  eosio_assert(is_account(worker.value), "worker account does not exist");
+  check(is_account(client), "client account does not exist");
+  check(is_account(worker), "worker account does not exist");
 
-  eosio_assert(0 < escrow && escrow <= 1000 , "escrow should be more than 0 and less then or equal to 1000");
-  eosio_assert(0 < reputation && reputation <= 1000, "reputation should be more than 0 and less then or equal to 1000");
+  check(0 < escrow && escrow <= 1000 , "escrow should be more than 0 and less then or equal to 1000");
+  check(0 < reputation && reputation <= 1000, "reputation should be more than 0 and less then or equal to 1000");
 
   jobs_index jobs(_self, _self.value);
   auto found_job = jobs.find(id);
 
-  eosio_assert(found_job == jobs.end(), "job with such id already exists");
+  check(found_job == jobs.end(), "job with such id already exists");
  
   jobs.emplace(_self, [&](auto& job){
     job.id = id;
@@ -37,7 +37,7 @@ ACTION escrow::create(
     job.reputation = reputation;
     job.success = false;
     job.complete = false;
-    job.created = now();
+    job.created = current_time_point().sec_since_epoch();
   });
 
   //Call HMR burn for the worker
@@ -48,13 +48,13 @@ ACTION escrow::create(
   ).send();
 }
 
-ACTION escrow::release(uint64_t id, uint64_t reputation)
+ACTION escrow::release(uint64_t id, uint64_t worker_reputation, uint64_t client_reputation)
 {
-  require_auth(_self.value);
+  require_auth(_self);
 
   jobs_index jobs(_self, _self.value);
   const auto& found_job = jobs.get(id, "no job object found");
-  eosio_assert(!found_job.complete, "job is already completed");
+  check(!found_job.complete, "job is already completed");
 
   jobs.modify(found_job, _self, [&](auto& job){
     job.complete = true;
@@ -62,31 +62,34 @@ ACTION escrow::release(uint64_t id, uint64_t reputation)
   });
 
   transfer_token(found_job.worker, found_job.escrow);
-  mint_reputation(found_job.worker, reputation);
+  mint_reputation(found_job.worker, worker_reputation);
+  // will transfer only coefficient which was add to common reputation for worker feedback
+  // example reputation for job = 10 worker will receive 13 HMR, client will receive 3 HMR (Only coefficient)
+  mint_reputation(found_job.client, client_reputation);
 }
 
 ACTION escrow::history(uint64_t id, string status, string history)
 {
-  require_auth(_self.value);
+  require_auth(_self);
   uint32_t statusNumber = convert(status);
-  eosio_assert(statusNumber, "undefined status");
+  check(statusNumber, "undefined status");
   jobs_index jobs(_self, _self.value);
   const auto& found_job = jobs.get(id, "no job object found");
 
   jobs.modify(found_job, _self, [&](auto& job){
     job.status = statusNumber;
-    job.updated = now();
+    job.updated = current_time_point().sec_since_epoch();
     job.history.push_back(history);
   });
 }
 
 ACTION escrow::refund(uint64_t id, uint64_t cancellationLogic)
 {
-  require_auth(_self.value);
+  require_auth(_self);
 
   jobs_index jobs(_self, _self.value);
   const auto& found_job = jobs.get(id, "no job object found");
-  eosio_assert(!found_job.complete, "job is already completed");
+  check(!found_job.complete, "job is already completed");
 
   jobs.modify(found_job, _self, [&](auto& job){
     job.complete = true;

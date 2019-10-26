@@ -1,10 +1,10 @@
 #pragma once
 
-#include <eosiolib/eosio.hpp>
-#include <eosiolib/asset.hpp>
-#include <eosiolib/symbol.hpp>
-#include <eosiolib/print.hpp>
-#include <eosiolib/system.h>
+#include <eosio/eosio.hpp>
+#include <eosio/print.hpp>
+#include <eosio/asset.hpp>
+#include <eosio/symbol.hpp>
+#include <eosio/system.hpp>
 #include <string>
 
 using namespace eosio;
@@ -38,7 +38,7 @@ namespace heymate {
         uint64_t reputation
       );
 
-      ACTION release(uint64_t id, uint64_t reputation);
+      ACTION release(uint64_t id, uint64_t worker_reputation, uint64_t client_reputation);
 
       ACTION refund(uint64_t id, uint64_t cancellationLogic);
 
